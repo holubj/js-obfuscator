@@ -1,0 +1,14 @@
+{
+  "name": "js-obfuscator",
+  "version": "1.0.0",
+  "description": "JavaScript minifier and obfuscator",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Jakub Holub",
+  "license": "ISC",
+  "dependencies": {
+    "escodegen": "^1.11.1"
+  }
+}
