@@ -1,3 +1,7 @@
+# Project specific
+build/**/*.js.map
+.vscode
+
 # Logs
 logs
 *.log

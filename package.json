@@ -2,13 +2,17 @@
   "name": "js-obfuscator",
   "version": "1.0.0",
   "description": "JavaScript minifier and obfuscator",
-  "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "tsc": "tsc",
+    "dev": "ts-node-dev --transpileOnly ./src/obfuscator.ts",
+    "start": "tsc && node ./build/obfuscator.js"
   },
   "author": "Jakub Holub",
   "license": "ISC",
   "dependencies": {
-    "escodegen": "^1.11.1"
+    "@types/escodegen": "0.0.6",
+    "escodegen": "^1.11.1",
+    "ts-node-dev": "^1.0.0-pre.32",
+    "typescript": "^3.3.3333"
   }
 }
