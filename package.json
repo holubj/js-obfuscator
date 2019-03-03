@@ -10,9 +10,18 @@
   "author": "Jakub Holub",
   "license": "ISC",
   "dependencies": {
-    "@types/escodegen": "0.0.6",
     "escodegen": "^1.11.1",
+    "esmangle": "^1.0.1",
+    "espree": "^5.0.1",
+    "estraverse": "^4.2.0",
+    "esvalid": "^1.1.0",
     "ts-node-dev": "^1.0.0-pre.32",
     "typescript": "^3.3.3333"
+  },
+  "devDependencies": {
+    "@types/escodegen": "0.0.6",
+    "@types/estraverse": "0.0.6",
+    "@types/estree": "0.0.39",
+    "@types/node": "^11.10.4"
   }
 }

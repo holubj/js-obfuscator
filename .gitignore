@@ -1,6 +1,7 @@
 # Project specific
 build/**/*.js.map
 .vscode
+*.DS_Store
 
 # Logs
 logs
