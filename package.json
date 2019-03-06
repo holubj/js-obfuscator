@@ -1,11 +1,11 @@
 {
-  "name": "js-obfuscator",
+  "name": "js-obfuscation",
   "version": "1.0.0",
   "description": "JavaScript minifier and obfuscator",
   "scripts": {
     "tsc": "tsc",
-    "dev": "ts-node-dev --transpileOnly ./src/obfuscator.ts",
-    "start": "tsc && node ./build/obfuscator.js"
+    "dev": "ts-node-dev --transpileOnly ./src/obfuscation.ts  ./sample/simple.js",
+    "start": "tsc && node ./build/obfuscation.js ./sample/simple.js"
   },
   "author": "Jakub Holub",
   "license": "ISC",

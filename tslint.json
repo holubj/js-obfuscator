@@ -10,6 +10,7 @@
         "object-literal-sort-keys": false,
         "no-trailing-whitespace": false,
         "trailing-comma": false,
+        "no-var-requires": false,
         "typedef": [
             true,
             "call-signature",
