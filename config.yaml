@@ -7,3 +7,6 @@ stream:
       unaryOperators: true
       assignmentOperators: true
       binaryOperators: true
+  - name: Console Replacement
+    file: ./transformations/consoleReplacement.js
+    enabled: true
