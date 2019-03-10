@@ -4,24 +4,27 @@
   "description": "JavaScript minifier and obfuscator",
   "scripts": {
     "tsc": "tsc",
-    "dev": "ts-node-dev --transpileOnly ./src/obfuscation.ts  ./sample/simple.js",
     "start": "tsc && node ./build/obfuscation.js ./sample/simple.js"
   },
   "author": "Jakub Holub",
   "license": "ISC",
   "dependencies": {
+    "colors": "^1.3.3",
     "escodegen": "^1.11.1",
     "esmangle": "^1.0.1",
     "espree": "^5.0.1",
     "estraverse": "^4.2.0",
     "esvalid": "^1.1.0",
-    "ts-node-dev": "^1.0.0-pre.32",
+    "js-yaml": "^3.12.2",
+    "randomstring": "^1.1.5",
     "typescript": "^3.3.3333"
   },
   "devDependencies": {
     "@types/escodegen": "0.0.6",
     "@types/estraverse": "0.0.6",
     "@types/estree": "0.0.39",
-    "@types/node": "^11.10.4"
+    "@types/js-yaml": "^3.12.0",
+    "@types/node": "^11.10.4",
+    "@types/randomstring": "^1.1.6"
   }
 }

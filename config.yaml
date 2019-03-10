@@ -1,0 +1,9 @@
+verbose: true
+stream:
+  - name: Operator Outlining
+    file: ./transformations/operatorOutlining.js
+    enabled: true
+    settings:
+      unaryOperators: true
+      assignmentOperators: true
+      binaryOperators: true

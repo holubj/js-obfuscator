@@ -11,6 +11,8 @@
         "no-trailing-whitespace": false,
         "trailing-comma": false,
         "no-var-requires": false,
+        "no-implicit-dependencies": false,
+        "max-line-length": [true, 160],
         "typedef": [
             true,
             "call-signature",

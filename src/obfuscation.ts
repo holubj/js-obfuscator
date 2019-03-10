@@ -1,10 +1,13 @@
 import escodegen from 'escodegen';
 import esmangle from 'esmangle';
 import espree from 'espree';
-import { Program } from 'estree';
+import * as estree from 'estree';
 import esvalid from 'esvalid';
 import * as fs from 'fs';
-import { BaseTransformation, transformations } from './transformations';
+import { configuration, Verbose } from './configuration';
+import { Identifiers } from './identifiers';
+import { InsertPosition } from './insertPosition';
+import { BaseTransformation } from './transformations';
 
 Error.stackTraceLimit = Infinity;
 
@@ -23,15 +26,20 @@ try {
   process.exit(1);
 }
 
-let p: Program = espree.parse(code);
+let p: estree.Program = espree.parse(code);
+// p = esmangle.optimize(p, null);
+// p = esmangle.mangle(p);
 
-p = esmangle.optimize(p, null);
-p = esmangle.mangle(p);
+Identifiers.init(p);
+InsertPosition.init(p);
 
-for (const definition of transformations) {
-  const transformationClass: any = require(definition.file);
-  const transformation: BaseTransformation = new transformationClass(p);
-  p = transformation.apply();
+for (const item of configuration.stream) {
+  if (item.enabled) {
+    const transformationClass: any = require(item.file);
+    const transformation: BaseTransformation = new transformationClass(p, item.settings);
+    Verbose.log(`Running transformation '${item.name}'`.green.bold);
+    p = transformation.apply();
+  }
 }
 
 const result: string = escodegen.generate(p, {

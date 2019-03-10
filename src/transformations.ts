@@ -1,5 +1,4 @@
-import { Program } from 'estree';
-import * as fs from 'fs';
+import * as estree from 'estree';
 
 export interface ITransformationDefinition {
   name: string;
@@ -7,24 +6,14 @@ export interface ITransformationDefinition {
   settings: object;
 }
 
-export let transformations: ITransformationDefinition[] = [];
-
-try {
-  transformations = JSON.parse(
-    fs.readFileSync(__dirname + '/../settings.json', 'utf8')
-  );
-} catch (err) {
-  transformations = [];
-}
-
 export abstract class BaseTransformation {
-  protected p: Program;
-  protected readonly settings: object;
+  protected ast: estree.Program;
+  protected readonly settings: any;
 
-  constructor(p: Program, settings: object = {}) {
-    this.p = p;
+  constructor(ast: estree.Program, settings: any = {}) {
+    this.ast = ast;
     this.settings = settings;
   }
 
-  public abstract apply(): Program;
+  public abstract apply(): estree.Program;
 }

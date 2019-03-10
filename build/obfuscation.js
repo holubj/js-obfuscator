@@ -11,10 +11,11 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var escodegen_1 = __importDefault(require("escodegen"));
-var esmangle_1 = __importDefault(require("esmangle"));
 var espree_1 = __importDefault(require("espree"));
 var fs = __importStar(require("fs"));
-var transformations_1 = require("./transformations");
+var configuration_1 = require("./configuration");
+var identifiers_1 = require("./identifiers");
+var insertPosition_1 = require("./insertPosition");
 Error.stackTraceLimit = Infinity;
 if (process.argv.length < 3) {
     console.log('Usage: node ' + process.argv[1] + ' FILENAME');
@@ -30,13 +31,18 @@ catch (err) {
     process.exit(1);
 }
 var p = espree_1.default.parse(code);
-p = esmangle_1.default.optimize(p, null);
-p = esmangle_1.default.mangle(p);
-for (var _i = 0, transformations_2 = transformations_1.transformations; _i < transformations_2.length; _i++) {
-    var definition = transformations_2[_i];
-    var transformationClass = require(definition.file);
-    var transformation = new transformationClass(p);
-    p = transformation.apply();
+// p = esmangle.optimize(p, null);
+// p = esmangle.mangle(p);
+identifiers_1.Identifiers.init(p);
+insertPosition_1.InsertPosition.init(p);
+for (var _i = 0, _a = configuration_1.configuration.stream; _i < _a.length; _i++) {
+    var item = _a[_i];
+    if (item.enabled) {
+        var transformationClass = require(item.file);
+        var transformation = new transformationClass(p, item.settings);
+        configuration_1.Verbose.log(("Running transformation '" + item.name + "'").green.bold);
+        p = transformation.apply();
+    }
 }
 var result = escodegen_1.default.generate(p, {
     format: {
