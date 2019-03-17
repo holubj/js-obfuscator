@@ -84,15 +84,13 @@ class OperatorOutlining extends BaseTransformation {
     estraverse.replace(this.ast, {
       enter: (node: estree.Node): estree.Node | void => {
         if (node.type === 'UnaryExpression' && node.operator !== 'delete') {
-          const unaryExpressionNode: estree.UnaryExpression = node as estree.UnaryExpression;
-
           const callExpression: estree.CallExpression = {
             type: 'CallExpression',
             callee: {
               type: 'Identifier',
-              name: this.getOperatorFuncIdentifier(unaryExpressionNode)
+              name: this.getOperatorFuncIdentifier(node)
             },
-            arguments: [unaryExpressionNode.argument]
+            arguments: [node.argument]
           };
 
           return callExpression;
@@ -142,18 +140,16 @@ class OperatorOutlining extends BaseTransformation {
     estraverse.replace(this.ast, {
       enter: (node: estree.Node): estree.Node | void => {
         if (node.type === 'AssignmentExpression') {
-          const assignmentExpression: estree.AssignmentExpression = node as estree.AssignmentExpression;
-
-          if (assignmentExpression.operator !== '=' && assignmentExpression.left.type === 'Identifier') {
+          if (node.operator !== '=' && node.left.type === 'Identifier') {
             const replacement: estree.AssignmentExpression = {
               type: 'AssignmentExpression',
               operator: '=',
-              left: assignmentExpression.left,
+              left: node.left,
               right: {
                 type: 'BinaryExpression',
                 operator: '+',
-                left: assignmentExpression.left,
-                right: assignmentExpression.right
+                left: node.left,
+                right: node.right
               }
             };
 
@@ -172,15 +168,13 @@ class OperatorOutlining extends BaseTransformation {
     estraverse.replace(this.ast, {
       enter: (node: estree.Node): estree.Node | void => {
         if (node.type === 'BinaryExpression') {
-          const binaryExpressionNode: estree.BinaryExpression = node as estree.BinaryExpression;
-
           const callExpression: estree.CallExpression = {
             type: 'CallExpression',
             callee: {
               type: 'Identifier',
-              name: this.getOperatorFuncIdentifier(binaryExpressionNode)
+              name: this.getOperatorFuncIdentifier(node)
             },
-            arguments: [binaryExpressionNode.left, binaryExpressionNode.right]
+            arguments: [node.left, node.right]
           };
 
           return callExpression;

@@ -103,14 +103,13 @@ var OperatorOutlining = /** @class */ (function (_super) {
         estraverse.replace(this.ast, {
             enter: function (node) {
                 if (node.type === 'UnaryExpression' && node.operator !== 'delete') {
-                    var unaryExpressionNode = node;
                     var callExpression = {
                         type: 'CallExpression',
                         callee: {
                             type: 'Identifier',
-                            name: _this.getOperatorFuncIdentifier(unaryExpressionNode)
+                            name: _this.getOperatorFuncIdentifier(node)
                         },
-                        arguments: [unaryExpressionNode.argument]
+                        arguments: [node.argument]
                     };
                     return callExpression;
                 }
@@ -155,17 +154,16 @@ var OperatorOutlining = /** @class */ (function (_super) {
         estraverse.replace(this.ast, {
             enter: function (node) {
                 if (node.type === 'AssignmentExpression') {
-                    var assignmentExpression = node;
-                    if (assignmentExpression.operator !== '=' && assignmentExpression.left.type === 'Identifier') {
+                    if (node.operator !== '=' && node.left.type === 'Identifier') {
                         var replacement = {
                             type: 'AssignmentExpression',
                             operator: '=',
-                            left: assignmentExpression.left,
+                            left: node.left,
                             right: {
                                 type: 'BinaryExpression',
                                 operator: '+',
-                                left: assignmentExpression.left,
-                                right: assignmentExpression.right
+                                left: node.left,
+                                right: node.right
                             }
                         };
                         return replacement;
@@ -183,14 +181,13 @@ var OperatorOutlining = /** @class */ (function (_super) {
         estraverse.replace(this.ast, {
             enter: function (node) {
                 if (node.type === 'BinaryExpression') {
-                    var binaryExpressionNode = node;
                     var callExpression = {
                         type: 'CallExpression',
                         callee: {
                             type: 'Identifier',
-                            name: _this.getOperatorFuncIdentifier(binaryExpressionNode)
+                            name: _this.getOperatorFuncIdentifier(node)
                         },
-                        arguments: [binaryExpressionNode.left, binaryExpressionNode.right]
+                        arguments: [node.left, node.right]
                     };
                     return callExpression;
                 }
