@@ -10,6 +10,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+require("colors");
 var escodegen_1 = __importDefault(require("escodegen"));
 var espree_1 = __importDefault(require("espree"));
 var fs = __importStar(require("fs"));
@@ -40,8 +41,9 @@ for (var _i = 0, _a = configuration_1.configuration.stream; _i < _a.length; _i++
     if (item.enabled) {
         var transformationClass = require(item.file);
         var transformation = new transformationClass(p, item.settings);
-        configuration_1.Verbose.log(("Running transformation '" + item.name + "'").green.bold);
+        configuration_1.Verbose.log(("Transformation '" + item.name + "' started").green.bold);
         p = transformation.apply();
+        configuration_1.Verbose.log(("Transformation '" + item.name + "' finished").green.bold);
     }
 }
 var result = escodegen_1.default.generate(p, {
@@ -52,7 +54,8 @@ var result = escodegen_1.default.generate(p, {
         compact: true,
         semicolons: false,
         parentheses: false
-    }
+    },
+    verbatim: 'x-verbatim-property'
 });
 console.log(result);
 //# sourceMappingURL=obfuscation.js.map

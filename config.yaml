@@ -10,3 +10,6 @@ stream:
   - name: Console Replacement
     file: ./transformations/consoleReplacement.js
     enabled: true
+  - name: Unicode Literal
+    file: ./transformations/unicodeLiteral.js
+    enabled: true

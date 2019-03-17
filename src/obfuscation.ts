@@ -1,3 +1,4 @@
+import 'colors';
 import escodegen from 'escodegen';
 import esmangle from 'esmangle';
 import espree from 'espree';
@@ -37,8 +38,9 @@ for (const item of configuration.stream) {
   if (item.enabled) {
     const transformationClass: any = require(item.file);
     const transformation: BaseTransformation = new transformationClass(p, item.settings);
-    Verbose.log(`Running transformation '${item.name}'`.green.bold);
+    Verbose.log(`Transformation '${item.name}' started`.green.bold);
     p = transformation.apply();
+    Verbose.log(`Transformation '${item.name}' finished`.green.bold);
   }
 }
 
@@ -50,7 +52,8 @@ const result: string = escodegen.generate(p, {
     compact: true,
     semicolons: false,
     parentheses: false
-  }
+  },
+  verbatim: 'x-verbatim-property'
 });
 
 console.log(result);
