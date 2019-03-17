@@ -73,7 +73,7 @@ class OperatorOutlining extends BaseTransformation {
   protected registerFunc(operatorKey: string, generatedIdentifier: string, operatorFunc: estree.FunctionDeclaration): void {
     this.funcIdentifiers[operatorKey] = generatedIdentifier;
     this.ast.body.splice(InsertPosition.get(), 0, operatorFunc);
-    Verbose.log(`  Operator '${operatorKey}' outlined`.yellow);
+    Verbose.log(`Operator '${operatorKey}' outlined`.yellow);
   }
 
   /**

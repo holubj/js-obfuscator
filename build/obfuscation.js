@@ -41,9 +41,10 @@ for (var _i = 0, _a = configuration_1.configuration.stream; _i < _a.length; _i++
     if (item.enabled) {
         var transformationClass = require(item.file);
         var transformation = new transformationClass(p, item.settings);
-        configuration_1.Verbose.log(("Transformation '" + item.name + "' started").green.bold);
+        configuration_1.Verbose.log(("Transformation '" + item.name + "' ").green + 'started'.green.bold);
         p = transformation.apply();
-        configuration_1.Verbose.log(("Transformation '" + item.name + "' finished").green.bold);
+        configuration_1.Verbose.log(("Transformation '" + item.name + "' ").green + 'finished'.green.bold);
+        configuration_1.Verbose.log('---------------------');
     }
 }
 var result = escodegen_1.default.generate(p, {

@@ -92,7 +92,7 @@ var OperatorOutlining = /** @class */ (function (_super) {
     OperatorOutlining.prototype.registerFunc = function (operatorKey, generatedIdentifier, operatorFunc) {
         this.funcIdentifiers[operatorKey] = generatedIdentifier;
         this.ast.body.splice(insertPosition_1.InsertPosition.get(), 0, operatorFunc);
-        configuration_1.Verbose.log(("  Operator '" + operatorKey + "' outlined").yellow);
+        configuration_1.Verbose.log(("Operator '" + operatorKey + "' outlined").yellow);
     };
     /**
      * @protected

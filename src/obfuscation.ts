@@ -38,9 +38,10 @@ for (const item of configuration.stream) {
   if (item.enabled) {
     const transformationClass: any = require(item.file);
     const transformation: BaseTransformation = new transformationClass(p, item.settings);
-    Verbose.log(`Transformation '${item.name}' started`.green.bold);
+    Verbose.log(`Transformation '${item.name}' `.green + 'started'.green.bold);
     p = transformation.apply();
-    Verbose.log(`Transformation '${item.name}' finished`.green.bold);
+    Verbose.log(`Transformation '${item.name}' `.green + 'finished'.green.bold);
+    Verbose.log('---------------------');
   }
 }
 

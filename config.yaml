@@ -1,5 +1,8 @@
 verbose: true
 stream:
+  - name: Computed Member
+    file: ./transformations/computedMember.js
+    enabled: true
   - name: Operator Outlining
     file: ./transformations/operatorOutlining.js
     enabled: true

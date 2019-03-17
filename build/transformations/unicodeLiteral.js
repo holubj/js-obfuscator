@@ -60,6 +60,7 @@ var UnicodeLiteral = /** @class */ (function (_super) {
         return this.ast;
     };
     /**
+     * https://gist.github.com/mathiasbynens/1243213
      * @protected
      * @param {string} str
      * @returns {string}
