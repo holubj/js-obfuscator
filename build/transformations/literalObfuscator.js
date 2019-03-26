@@ -51,8 +51,6 @@ var LiteralObfuscator = /** @class */ (function (_super) {
                 if (node.type === 'Literal' && typeof node.value === 'string' && node.value !== 'use strict') {
                     count++;
                     var index = _this.literals.findIndex(function (literal) { return literal === node.value; });
-                    console.log(node.value);
-                    console.log(index);
                     return _this.generateAccessFuncCall(accessFuncIdentifier, index);
                 }
             }

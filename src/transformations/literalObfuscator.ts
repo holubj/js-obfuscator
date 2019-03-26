@@ -27,10 +27,6 @@ class LiteralObfuscator extends BaseTransformation {
         if (node.type === 'Literal' && typeof node.value === 'string' && node.value !== 'use strict') {
           count++;
           const index: number = this.literals.findIndex((literal: string) => literal === node.value);
-
-          console.log(node.value);
-          console.log(index);
-
           return this.generateAccessFuncCall(accessFuncIdentifier, index);
         }
       }
