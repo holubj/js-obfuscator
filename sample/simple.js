@@ -1,7 +1,13 @@
 'use strict';
+var test = ['abc', 'bcd', 'cbd'];
+var s = 'ěščřžýáí@@`#$~{&^#{😀';
+console.log(test[0]);
+console.log(test[1]);
+console.log(test[2]);
+console.log(s);
+/*
 var a = true;
 console.log(a);
-var s = 'ěščřžýáí@@`#$~{&^#{😀';
 console.log(s);
 var ss = '\x75\x73\x65';
 

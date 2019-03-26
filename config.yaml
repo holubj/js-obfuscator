@@ -12,6 +12,9 @@ stream:
       binaryOperators: true
   - name: Console Replacement
     file: ./transformations/consoleReplacement.js
+    enabled: false
+  - name: Literal Obfuscator
+    file: ./transformations/literalObfuscator.js
     enabled: true
   - name: Unicode Literal
     file: ./transformations/unicodeLiteral.js
