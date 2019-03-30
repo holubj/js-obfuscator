@@ -40,25 +40,48 @@ var LiteralObfuscator = /** @class */ (function (_super) {
      * @memberof LiteralObfuscator
      */
     LiteralObfuscator.prototype.apply = function () {
-        var _this = this;
-        var count = 0;
-        var literalArrayIdentifier = identifiers_1.Identifiers.generate();
-        var accessFuncIdentifier = identifiers_1.Identifiers.generate();
+        this.splitLiterals();
         this.fetchLiterals();
-        this.literals = shuffle_array_1.default(this.literals);
+        this.moveLiteralsToLiteralArray();
+        this.base64EncodeLiterals();
+        return this.ast;
+    };
+    /**
+     * @protected
+     * @returns {void}
+     * @memberof LiteralObfuscator
+     */
+    LiteralObfuscator.prototype.splitLiterals = function () {
+        var _this = this;
+        if (this.settings.splitThreshold === 0) {
+            return;
+        }
+        var count = 0;
         estraverse.replace(this.ast, {
-            enter: function (node) {
+            leave: function (node) {
                 if (node.type === 'Literal' && typeof node.value === 'string' && node.value !== 'use strict') {
-                    count++;
-                    var index = _this.literals.findIndex(function (literal) { return literal === node.value; });
-                    return _this.generateAccessFuncCall(accessFuncIdentifier, index);
+                    if (Math.random() <= _this.settings.splitThreshold) {
+                        if (node.value.length >= 2) {
+                            count++;
+                            var cut = Math.floor(Math.random() * (node.value.length - 1)) + 1;
+                            return {
+                                type: 'BinaryExpression',
+                                operator: '+',
+                                left: {
+                                    type: 'Literal',
+                                    value: node.value.substring(0, cut)
+                                },
+                                right: {
+                                    type: 'Literal',
+                                    value: node.value.substring(cut)
+                                }
+                            };
+                        }
+                    }
                 }
             }
         });
-        this.ast.body.splice(insertPosition_1.InsertPosition.get(), 0, this.generateAccessFuncDeclaration(accessFuncIdentifier, literalArrayIdentifier));
-        this.ast.body.splice(insertPosition_1.InsertPosition.get(), 0, this.generateLiteralArray(literalArrayIdentifier));
-        configuration_1.Verbose.log((count + " literals moved to literal array.").yellow);
-        return this.ast;
+        configuration_1.Verbose.log((count + " literals splitted.").yellow);
     };
     /**
      * @protected
@@ -69,12 +92,68 @@ var LiteralObfuscator = /** @class */ (function (_super) {
         estraverse.replace(this.ast, {
             enter: function (node) {
                 if (node.type === 'Literal' && typeof node.value === 'string' && node.value !== 'use strict') {
-                    if (!_this.literals.find(function (literal) { return literal === node.value; })) {
-                        _this.literals.push(node.value);
+                    if (Math.random() <= _this.settings.arrayThreshold) {
+                        if (!_this.literals.find(function (literal) { return literal === node.value; })) {
+                            _this.literals.push(node.value);
+                        }
                     }
                 }
             }
         });
+        this.literals = shuffle_array_1.default(this.literals);
+    };
+    /**
+     * @protected
+     * @memberof LiteralObfuscator
+     */
+    LiteralObfuscator.prototype.moveLiteralsToLiteralArray = function () {
+        var _this = this;
+        var count = 0;
+        var shift = Math.floor(Math.random() * 100);
+        var literalArrayIdentifier = identifiers_1.Identifiers.generate();
+        var accessFuncIdentifier = identifiers_1.Identifiers.generate();
+        estraverse.replace(this.ast, {
+            enter: function (node) {
+                if (node.type === 'Literal' && typeof node.value === 'string' && node.value !== 'use strict') {
+                    // some literals may be omitted based on threshold settings
+                    if (_this.literals.indexOf(node.value) > -1) {
+                        count++;
+                        var index = _this.literals.findIndex(function (literal) { return literal === node.value; });
+                        return _this.generateAccessFuncCall(accessFuncIdentifier, index + shift);
+                    }
+                }
+            }
+        });
+        this.ast.body.splice(insertPosition_1.InsertPosition.get(), 0, this.generateAccessFuncDeclaration(accessFuncIdentifier, literalArrayIdentifier, shift));
+        this.ast.body.splice(insertPosition_1.InsertPosition.get(), 0, this.generateLiteralArray(literalArrayIdentifier));
+        configuration_1.Verbose.log((count + " literals moved to literal array.").yellow);
+    };
+    LiteralObfuscator.prototype.base64EncodeLiterals = function () {
+        var _this = this;
+        var count = 0;
+        estraverse.replace(this.ast, {
+            leave: function (node) {
+                if (node.type === 'Literal' && typeof node.value === 'string' && node.value !== 'use strict') {
+                    if (Math.random() <= _this.settings.base64Threshold && !/[^A-Za-z0-9 ]/.test(node.value)) {
+                        count++;
+                        return {
+                            type: 'CallExpression',
+                            callee: {
+                                type: 'Identifier',
+                                name: 'atob'
+                            },
+                            arguments: [
+                                {
+                                    type: 'Literal',
+                                    value: Buffer.from(node.value, 'binary').toString('base64')
+                                }
+                            ]
+                        };
+                    }
+                }
+            }
+        });
+        configuration_1.Verbose.log((count + " literals encoded to base64.").yellow);
     };
     /**
      * @protected
@@ -116,7 +195,7 @@ var LiteralObfuscator = /** @class */ (function (_super) {
      * @returns {estree.FunctionDeclaration}
      * @memberof LiteralObfuscator
      */
-    LiteralObfuscator.prototype.generateAccessFuncDeclaration = function (accessFuncIdentifier, literalArrayIdentifier) {
+    LiteralObfuscator.prototype.generateAccessFuncDeclaration = function (accessFuncIdentifier, literalArrayIdentifier, shift) {
         var argumentIdent = identifiers_1.Identifiers.generate();
         return {
             type: 'FunctionDeclaration',
@@ -135,8 +214,10 @@ var LiteralObfuscator = /** @class */ (function (_super) {
                                 name: literalArrayIdentifier
                             },
                             property: {
-                                type: 'Identifier',
-                                name: argumentIdent
+                                type: 'BinaryExpression',
+                                operator: '-',
+                                left: { type: 'Identifier', name: argumentIdent },
+                                right: { type: 'Literal', value: shift }
                             },
                             computed: true
                         }

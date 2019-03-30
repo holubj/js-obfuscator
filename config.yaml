@@ -16,6 +16,10 @@ stream:
   - name: Literal Obfuscator
     file: ./transformations/literalObfuscator.js
     enabled: true
+    settings:
+      splitThreshold: 0.25 # ~25% of strings splitted
+      arrayThreshold: 0.85 # ~85% of strings moved to array
+      base64Threshold: 0.25 # ~25% of strings encoded to base64
   - name: Unicode Literal
     file: ./transformations/unicodeLiteral.js
     enabled: true
