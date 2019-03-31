@@ -19,6 +19,11 @@ stream:
     settings:
       booleanThreshold: 0.8 # 80% of booleans obfuscated
       undefinedThreshold: 0.8 # 80% of 'undefined' expression obfuscated
+  - name: Number Obfuscator
+    file: ./transformations/numberObfuscator.js
+    enabled: true
+    settings:
+      threshold: 0.5 # 50% of numbers obfuscated
   - name: Literal Obfuscator
     file: ./transformations/literalObfuscator.js
     enabled: true
