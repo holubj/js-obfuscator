@@ -13,6 +13,12 @@ stream:
   - name: Console Replacement
     file: ./transformations/consoleReplacement.js
     enabled: false
+  - name: Expression Obfuscator
+    file: ./transformations/expressionObfuscator.js
+    enabled: true
+    settings:
+      booleanThreshold: 0.8 # 80% of booleans obfuscated
+      undefinedThreshold: 0.8 # 80% of 'undefined' expression obfuscated
   - name: Literal Obfuscator
     file: ./transformations/literalObfuscator.js
     enabled: true

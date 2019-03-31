@@ -53,9 +53,6 @@ var LiteralObfuscator = /** @class */ (function (_super) {
      */
     LiteralObfuscator.prototype.splitLiterals = function () {
         var _this = this;
-        if (this.settings.splitThreshold === 0) {
-            return;
-        }
         var count = 0;
         estraverse.replace(this.ast, {
             leave: function (node) {
@@ -115,7 +112,7 @@ var LiteralObfuscator = /** @class */ (function (_super) {
         estraverse.replace(this.ast, {
             enter: function (node) {
                 if (node.type === 'Literal' && typeof node.value === 'string' && node.value !== 'use strict') {
-                    // some literals may be omitted based on threshold settings
+                    // some literals might be omitted based on threshold settings
                     if (_this.literals.indexOf(node.value) > -1) {
                         count++;
                         var index = _this.literals.findIndex(function (literal) { return literal === node.value; });

@@ -1,4 +1,12 @@
 'use strict';
+
+var a = false;
+
+if (a === false) {
+    console.log(undefined);
+}
+
+/*
 var test = ['abc', 'bcd', 'cbd'];
 var s = 'ěščřžýáí@@`#$~{&^#{';
 console.log(test[0]);
