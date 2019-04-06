@@ -1,5 +1,13 @@
 'use strict';
 
+function args(a, b, c) {
+    return a - b - c;
+}
+
+var a = 5;
+console.log(args(a, 2, 3));
+
+/*
 function test1() {}
 
 function test2() {}
