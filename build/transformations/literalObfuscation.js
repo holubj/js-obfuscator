@@ -29,18 +29,18 @@ var configuration_1 = require("../configuration");
 var identifiers_1 = require("../identifiers");
 var insertPosition_1 = require("../insertPosition");
 var transformations_1 = require("../transformations");
-var LiteralObfuscator = /** @class */ (function (_super) {
-    __extends(LiteralObfuscator, _super);
-    function LiteralObfuscator() {
+var LiteralObfuscation = /** @class */ (function (_super) {
+    __extends(LiteralObfuscation, _super);
+    function LiteralObfuscation() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this.literals = [];
         return _this;
     }
     /**
      * @returns {estree.Program}
-     * @memberof LiteralObfuscator
+     * @memberof LiteralObfuscation
      */
-    LiteralObfuscator.prototype.apply = function () {
+    LiteralObfuscation.prototype.apply = function () {
         this.splitLiterals();
         this.fetchLiterals();
         this.moveLiteralsToLiteralArray();
@@ -50,9 +50,9 @@ var LiteralObfuscator = /** @class */ (function (_super) {
     /**
      * @protected
      * @returns {void}
-     * @memberof LiteralObfuscator
+     * @memberof LiteralObfuscation
      */
-    LiteralObfuscator.prototype.splitLiterals = function () {
+    LiteralObfuscation.prototype.splitLiterals = function () {
         var _this = this;
         var count = 0;
         estraverse.replace(this.ast, {
@@ -83,9 +83,9 @@ var LiteralObfuscator = /** @class */ (function (_super) {
     };
     /**
      * @protected
-     * @memberof LiteralObfuscator
+     * @memberof LiteralObfuscation
      */
-    LiteralObfuscator.prototype.fetchLiterals = function () {
+    LiteralObfuscation.prototype.fetchLiterals = function () {
         var _this = this;
         estraverse.replace(this.ast, {
             enter: function (node) {
@@ -102,9 +102,9 @@ var LiteralObfuscator = /** @class */ (function (_super) {
     };
     /**
      * @protected
-     * @memberof LiteralObfuscator
+     * @memberof LiteralObfuscation
      */
-    LiteralObfuscator.prototype.moveLiteralsToLiteralArray = function () {
+    LiteralObfuscation.prototype.moveLiteralsToLiteralArray = function () {
         var _this = this;
         var count = 0;
         var shift = Math.floor(Math.random() * 100);
@@ -126,7 +126,7 @@ var LiteralObfuscator = /** @class */ (function (_super) {
         this.ast.body.splice(insertPosition_1.InsertPosition.get(), 0, this.generateLiteralArray(literalArrayIdentifier));
         configuration_1.Verbose.log((count + " literals moved to literal array.").yellow);
     };
-    LiteralObfuscator.prototype.base64EncodeLiterals = function () {
+    LiteralObfuscation.prototype.base64EncodeLiterals = function () {
         var _this = this;
         var count = 0;
         estraverse.replace(this.ast, {
@@ -157,9 +157,9 @@ var LiteralObfuscator = /** @class */ (function (_super) {
      * @protected
      * @param {string} ident
      * @returns {estree.VariableDeclaration}
-     * @memberof LiteralObfuscator
+     * @memberof LiteralObfuscation
      */
-    LiteralObfuscator.prototype.generateLiteralArray = function (ident) {
+    LiteralObfuscation.prototype.generateLiteralArray = function (ident) {
         var elements = [];
         for (var _i = 0, _a = this.literals; _i < _a.length; _i++) {
             var literal = _a[_i];
@@ -191,9 +191,9 @@ var LiteralObfuscator = /** @class */ (function (_super) {
      * @param {string} accessFuncIdentifier
      * @param {string} literalArrayIdentifier
      * @returns {estree.FunctionDeclaration}
-     * @memberof LiteralObfuscator
+     * @memberof LiteralObfuscation
      */
-    LiteralObfuscator.prototype.generateAccessFuncDeclaration = function (accessFuncIdentifier, literalArrayIdentifier, shift) {
+    LiteralObfuscation.prototype.generateAccessFuncDeclaration = function (accessFuncIdentifier, literalArrayIdentifier, shift) {
         var argumentIdent = identifiers_1.Identifiers.generate();
         return {
             type: 'FunctionDeclaration',
@@ -229,9 +229,9 @@ var LiteralObfuscator = /** @class */ (function (_super) {
      * @param {string} accessFuncIdentifier
      * @param {number} index
      * @returns {estree.CallExpression}
-     * @memberof LiteralObfuscator
+     * @memberof LiteralObfuscation
      */
-    LiteralObfuscator.prototype.generateAccessFuncCall = function (accessFuncIdentifier, index) {
+    LiteralObfuscation.prototype.generateAccessFuncCall = function (accessFuncIdentifier, index) {
         return {
             type: 'CallExpression',
             callee: {
@@ -246,7 +246,7 @@ var LiteralObfuscator = /** @class */ (function (_super) {
             ]
         };
     };
-    return LiteralObfuscator;
+    return LiteralObfuscation;
 }(transformations_1.BaseTransformation));
-module.exports = LiteralObfuscator;
-//# sourceMappingURL=literalObfuscator.js.map
+module.exports = LiteralObfuscation;
+//# sourceMappingURL=literalObfuscation.js.map

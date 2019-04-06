@@ -22,9 +22,9 @@ var __importStar = (this && this.__importStar) || function (mod) {
 var estraverse = __importStar(require("estraverse"));
 var configuration_1 = require("../configuration");
 var transformations_1 = require("../transformations");
-var ExpressionObfuscator = /** @class */ (function (_super) {
-    __extends(ExpressionObfuscator, _super);
-    function ExpressionObfuscator() {
+var ExpressionObfuscation = /** @class */ (function (_super) {
+    __extends(ExpressionObfuscation, _super);
+    function ExpressionObfuscation() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this.falseExpression = {
             type: 'UnaryExpression',
@@ -57,9 +57,9 @@ var ExpressionObfuscator = /** @class */ (function (_super) {
     }
     /**
      * @returns {estree.Program}
-     * @memberof ExpressionObfuscator
+     * @memberof ExpressionObfuscation
      */
-    ExpressionObfuscator.prototype.apply = function () {
+    ExpressionObfuscation.prototype.apply = function () {
         var _this = this;
         var booleanCount = 0;
         var undefinedCount = 0;
@@ -89,7 +89,7 @@ var ExpressionObfuscator = /** @class */ (function (_super) {
         configuration_1.Verbose.log((undefinedCount + " 'undefined' expression obfuscated").yellow);
         return this.ast;
     };
-    return ExpressionObfuscator;
+    return ExpressionObfuscation;
 }(transformations_1.BaseTransformation));
-module.exports = ExpressionObfuscator;
-//# sourceMappingURL=expressionObfuscator.js.map
+module.exports = ExpressionObfuscation;
+//# sourceMappingURL=expressionObfuscation.js.map

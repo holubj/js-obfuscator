@@ -3,12 +3,12 @@ import { Identifiers } from '../identifiers';
 import { InsertPosition } from '../insertPosition';
 import { BaseTransformation } from '../transformations';
 
-class ConsoleReplacement extends BaseTransformation {
+class ConsoleRedefinition extends BaseTransformation {
   public readonly consoleMethods: string[] = ['log', 'warn', 'debug', 'info', 'error', 'exception', 'trace'];
 
   /**
    * @returns {estree.Program}
-   * @memberof ConsoleReplacement
+   * @memberof ConsoleRedefinition
    */
   public apply(): estree.Program {
     const statements: estree.Statement[] = [];
@@ -30,7 +30,7 @@ class ConsoleReplacement extends BaseTransformation {
   /**
    * @protected
    * @returns {estree.VariableDeclaration}
-   * @memberof ConsoleReplacement
+   * @memberof ConsoleRedefinition
    */
   protected generateConsoleDeclaration(): estree.VariableDeclaration {
     return {
@@ -50,7 +50,7 @@ class ConsoleReplacement extends BaseTransformation {
    * @protected
    * @param {string} identifier
    * @returns {estree.VariableDeclaration}
-   * @memberof ConsoleReplacement
+   * @memberof ConsoleRedefinition
    */
   protected generateDummyFunction(identifier: string): estree.VariableDeclaration {
     return {
@@ -77,7 +77,7 @@ class ConsoleReplacement extends BaseTransformation {
    * @param {string} method
    * @param {string} funcIdentifier
    * @returns {estree.ExpressionStatement}
-   * @memberof ConsoleReplacement
+   * @memberof ConsoleRedefinition
    */
   protected generateAssignment(method: string, funcIdentifier: string): estree.ExpressionStatement {
     return {
@@ -97,4 +97,4 @@ class ConsoleReplacement extends BaseTransformation {
   }
 }
 
-export = ConsoleReplacement;
+export = ConsoleRedefinition;

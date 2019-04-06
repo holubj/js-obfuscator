@@ -5,7 +5,7 @@ import * as estree from 'estree';
 import { Verbose } from '../configuration';
 import { BaseTransformation } from '../transformations';
 
-class NumberObfuscator extends BaseTransformation {
+class NumberObfuscation extends BaseTransformation {
   protected readonly zero: estree.UnaryExpression = {
     type: 'UnaryExpression',
     operator: '+',
@@ -30,7 +30,7 @@ class NumberObfuscator extends BaseTransformation {
 
   /**
    * @returns {estree.Program}
-   * @memberof NumberObfuscator
+   * @memberof NumberObfuscation
    */
   public apply(): estree.Program {
     let count: number = 0;
@@ -74,7 +74,7 @@ class NumberObfuscator extends BaseTransformation {
    * @protected
    * @param {number} value
    * @returns {(estree.UnaryExpression | estree.BinaryExpression)}
-   * @memberof NumberObfuscator
+   * @memberof NumberObfuscation
    */
   protected getNumberExpression(value: number): estree.UnaryExpression | estree.BinaryExpression {
     if (value > 1) {
@@ -92,4 +92,4 @@ class NumberObfuscator extends BaseTransformation {
   }
 }
 
-export = NumberObfuscator;
+export = NumberObfuscation;

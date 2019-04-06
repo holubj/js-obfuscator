@@ -3,7 +3,7 @@ import * as estree from 'estree';
 import { Verbose } from '../configuration';
 import { BaseTransformation } from '../transformations';
 
-class ExpressionObfuscator extends BaseTransformation {
+class ExpressionObfuscation extends BaseTransformation {
   protected readonly falseExpression: estree.UnaryExpression = {
     type: 'UnaryExpression',
     operator: '!',
@@ -36,7 +36,7 @@ class ExpressionObfuscator extends BaseTransformation {
 
   /**
    * @returns {estree.Program}
-   * @memberof ExpressionObfuscator
+   * @memberof ExpressionObfuscation
    */
   public apply(): estree.Program {
     let booleanCount: number = 0;
@@ -69,4 +69,4 @@ class ExpressionObfuscator extends BaseTransformation {
   }
 }
 
-export = ExpressionObfuscator;
+export = ExpressionObfuscation;

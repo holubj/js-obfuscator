@@ -1,6 +1,6 @@
 verbose: true
 stream:
-  - name: Computed Member
+  - name: Computed Member # transforms object.property to object['property']
     file: ./transformations/computedMember.js
     enabled: true
   - name: Operator Outlining
@@ -10,22 +10,22 @@ stream:
       unaryOperators: true
       assignmentOperators: true
       binaryOperators: true
-  - name: Console Replacement
-    file: ./transformations/consoleReplacement.js
+  - name: Console Redefinition
+    file: ./transformations/consoleRedefinition.js
     enabled: false
-  - name: Expression Obfuscator
-    file: ./transformations/expressionObfuscator.js
+  - name: Expression Obfuscation
+    file: ./transformations/expressionObfuscation.js
     enabled: true
     settings:
       booleanThreshold: 0.8 # 80% of booleans obfuscated
       undefinedThreshold: 0.8 # 80% of 'undefined' expression obfuscated
-  - name: Number Obfuscator
-    file: ./transformations/numberObfuscator.js
+  - name: Number Obfuscation
+    file: ./transformations/numberObfuscation.js
     enabled: true
     settings:
       threshold: 0.5 # 50% of numbers obfuscated
-  - name: Literal Obfuscator
-    file: ./transformations/literalObfuscator.js
+  - name: Literal Obfuscation
+    file: ./transformations/literalObfuscation.js
     enabled: true
     settings:
       splitThreshold: 0.25 # ~25% of strings splitted

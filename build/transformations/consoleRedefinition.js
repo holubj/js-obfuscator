@@ -15,18 +15,18 @@ var __extends = (this && this.__extends) || (function () {
 var identifiers_1 = require("../identifiers");
 var insertPosition_1 = require("../insertPosition");
 var transformations_1 = require("../transformations");
-var ConsoleReplacement = /** @class */ (function (_super) {
-    __extends(ConsoleReplacement, _super);
-    function ConsoleReplacement() {
+var ConsoleRedefinition = /** @class */ (function (_super) {
+    __extends(ConsoleRedefinition, _super);
+    function ConsoleRedefinition() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this.consoleMethods = ['log', 'warn', 'debug', 'info', 'error', 'exception', 'trace'];
         return _this;
     }
     /**
      * @returns {estree.Program}
-     * @memberof ConsoleReplacement
+     * @memberof ConsoleRedefinition
      */
-    ConsoleReplacement.prototype.apply = function () {
+    ConsoleRedefinition.prototype.apply = function () {
         var _a;
         var statements = [];
         statements.push(this.generateConsoleDeclaration());
@@ -42,9 +42,9 @@ var ConsoleReplacement = /** @class */ (function (_super) {
     /**
      * @protected
      * @returns {estree.VariableDeclaration}
-     * @memberof ConsoleReplacement
+     * @memberof ConsoleRedefinition
      */
-    ConsoleReplacement.prototype.generateConsoleDeclaration = function () {
+    ConsoleRedefinition.prototype.generateConsoleDeclaration = function () {
         return {
             type: 'VariableDeclaration',
             declarations: [
@@ -61,9 +61,9 @@ var ConsoleReplacement = /** @class */ (function (_super) {
      * @protected
      * @param {string} identifier
      * @returns {estree.VariableDeclaration}
-     * @memberof ConsoleReplacement
+     * @memberof ConsoleRedefinition
      */
-    ConsoleReplacement.prototype.generateDummyFunction = function (identifier) {
+    ConsoleRedefinition.prototype.generateDummyFunction = function (identifier) {
         return {
             type: 'VariableDeclaration',
             declarations: [
@@ -87,9 +87,9 @@ var ConsoleReplacement = /** @class */ (function (_super) {
      * @param {string} method
      * @param {string} funcIdentifier
      * @returns {estree.ExpressionStatement}
-     * @memberof ConsoleReplacement
+     * @memberof ConsoleRedefinition
      */
-    ConsoleReplacement.prototype.generateAssignment = function (method, funcIdentifier) {
+    ConsoleRedefinition.prototype.generateAssignment = function (method, funcIdentifier) {
         return {
             type: 'ExpressionStatement',
             expression: {
@@ -105,7 +105,7 @@ var ConsoleReplacement = /** @class */ (function (_super) {
             }
         };
     };
-    return ConsoleReplacement;
+    return ConsoleRedefinition;
 }(transformations_1.BaseTransformation));
-module.exports = ConsoleReplacement;
-//# sourceMappingURL=consoleReplacement.js.map
+module.exports = ConsoleRedefinition;
+//# sourceMappingURL=consoleRedefinition.js.map

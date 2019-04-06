@@ -8,12 +8,12 @@ import { Identifiers } from '../identifiers';
 import { InsertPosition } from '../insertPosition';
 import { BaseTransformation } from '../transformations';
 
-class LiteralObfuscator extends BaseTransformation {
+class LiteralObfuscation extends BaseTransformation {
   protected literals: string[] = [];
 
   /**
    * @returns {estree.Program}
-   * @memberof LiteralObfuscator
+   * @memberof LiteralObfuscation
    */
   public apply(): estree.Program {
     this.splitLiterals();
@@ -27,7 +27,7 @@ class LiteralObfuscator extends BaseTransformation {
   /**
    * @protected
    * @returns {void}
-   * @memberof LiteralObfuscator
+   * @memberof LiteralObfuscation
    */
   protected splitLiterals(): void {
     let count: number = 0;
@@ -63,7 +63,7 @@ class LiteralObfuscator extends BaseTransformation {
 
   /**
    * @protected
-   * @memberof LiteralObfuscator
+   * @memberof LiteralObfuscation
    */
   protected fetchLiterals(): void {
     estraverse.replace(this.ast, {
@@ -83,7 +83,7 @@ class LiteralObfuscator extends BaseTransformation {
 
   /**
    * @protected
-   * @memberof LiteralObfuscator
+   * @memberof LiteralObfuscation
    */
   protected moveLiteralsToLiteralArray(): void {
     let count: number = 0;
@@ -143,7 +143,7 @@ class LiteralObfuscator extends BaseTransformation {
    * @protected
    * @param {string} ident
    * @returns {estree.VariableDeclaration}
-   * @memberof LiteralObfuscator
+   * @memberof LiteralObfuscation
    */
   protected generateLiteralArray(ident: string): estree.VariableDeclaration {
     const elements: estree.Literal[] = [];
@@ -179,7 +179,7 @@ class LiteralObfuscator extends BaseTransformation {
    * @param {string} accessFuncIdentifier
    * @param {string} literalArrayIdentifier
    * @returns {estree.FunctionDeclaration}
-   * @memberof LiteralObfuscator
+   * @memberof LiteralObfuscation
    */
   protected generateAccessFuncDeclaration(accessFuncIdentifier: string, literalArrayIdentifier: string, shift: number): estree.FunctionDeclaration {
     const argumentIdent: string = Identifiers.generate();
@@ -219,7 +219,7 @@ class LiteralObfuscator extends BaseTransformation {
    * @param {string} accessFuncIdentifier
    * @param {number} index
    * @returns {estree.CallExpression}
-   * @memberof LiteralObfuscator
+   * @memberof LiteralObfuscation
    */
   protected generateAccessFuncCall(accessFuncIdentifier: string, index: number): estree.CallExpression {
     return {
@@ -238,4 +238,4 @@ class LiteralObfuscator extends BaseTransformation {
   }
 }
 
-export = LiteralObfuscator;
+export = LiteralObfuscation;

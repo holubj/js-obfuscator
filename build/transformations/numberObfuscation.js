@@ -27,9 +27,9 @@ var escodegen_1 = __importDefault(require("escodegen"));
 var estraverse = __importStar(require("estraverse"));
 var configuration_1 = require("../configuration");
 var transformations_1 = require("../transformations");
-var NumberObfuscator = /** @class */ (function (_super) {
-    __extends(NumberObfuscator, _super);
-    function NumberObfuscator() {
+var NumberObfuscation = /** @class */ (function (_super) {
+    __extends(NumberObfuscation, _super);
+    function NumberObfuscation() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this.zero = {
             type: 'UnaryExpression',
@@ -55,9 +55,9 @@ var NumberObfuscator = /** @class */ (function (_super) {
     }
     /**
      * @returns {estree.Program}
-     * @memberof NumberObfuscator
+     * @memberof NumberObfuscation
      */
-    NumberObfuscator.prototype.apply = function () {
+    NumberObfuscation.prototype.apply = function () {
         var _this = this;
         var count = 0;
         estraverse.replace(this.ast, {
@@ -97,9 +97,9 @@ var NumberObfuscator = /** @class */ (function (_super) {
      * @protected
      * @param {number} value
      * @returns {(estree.UnaryExpression | estree.BinaryExpression)}
-     * @memberof NumberObfuscator
+     * @memberof NumberObfuscation
      */
-    NumberObfuscator.prototype.getNumberExpression = function (value) {
+    NumberObfuscation.prototype.getNumberExpression = function (value) {
         if (value > 1) {
             return {
                 type: 'BinaryExpression',
@@ -115,7 +115,7 @@ var NumberObfuscator = /** @class */ (function (_super) {
             return this.zero;
         }
     };
-    return NumberObfuscator;
+    return NumberObfuscation;
 }(transformations_1.BaseTransformation));
-module.exports = NumberObfuscator;
-//# sourceMappingURL=numberObfuscator.js.map
+module.exports = NumberObfuscation;
+//# sourceMappingURL=numberObfuscation.js.map
