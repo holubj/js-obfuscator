@@ -1,5 +1,15 @@
 'use strict';
 
+function test1() {}
+
+function test2() {}
+
+function test3() {}
+
+function test4() {}
+
+function test5() {}
+/*
 console.log(0);
 console.log(1);
 console.log(2);

@@ -34,3 +34,6 @@ stream:
   - name: Unicode Literal
     file: ./transformations/unicodeLiteral.js
     enabled: true
+  - name: Function Definition Reordering
+    file: ./transformations/functionDefinitionReordering.js
+    enabled: true
