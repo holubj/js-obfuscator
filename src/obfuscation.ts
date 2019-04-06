@@ -1,14 +1,14 @@
 import 'colors';
-import escodegen from 'escodegen';
 import esmangle from 'esmangle';
 import espree from 'espree';
 import * as estree from 'estree';
 import esvalid from 'esvalid';
 import * as fs from 'fs';
+import { CodeGeneration } from './codeGeneration';
 import { configuration, Verbose } from './configuration';
 import { Identifiers } from './identifiers';
 import { InsertPosition } from './insertPosition';
-import { BaseTransformation } from './transformations';
+import { BaseTransformation, isSuitable } from './transformations';
 
 Error.stackTraceLimit = Infinity;
 
@@ -31,30 +31,24 @@ let p: estree.Program = espree.parse(code);
 // p = esmangle.optimize(p, null);
 // p = esmangle.mangle(p);
 
-Identifiers.init(p);
-InsertPosition.init(p);
+if (isSuitable(p)) {
+  Identifiers.init(p);
+  InsertPosition.init(p);
 
-for (const item of configuration.stream) {
-  if (item.enabled) {
-    const transformationClass: any = require(item.file);
-    const transformation: BaseTransformation = new transformationClass(p, item.settings);
-    Verbose.log(`Transformation '${item.name}' `.green + 'started'.green.bold);
-    p = transformation.apply();
-    Verbose.log(`Transformation '${item.name}' `.green + 'finished'.green.bold);
-    Verbose.log('---------------------');
+  for (const item of configuration.stream) {
+    if (item.enabled) {
+      const transformationClass: any = require(item.file);
+      const transformation: BaseTransformation = new transformationClass(p, item.settings);
+      Verbose.log(`Transformation '${item.name}' `.green + 'started'.green.bold);
+      p = transformation.apply();
+      Verbose.log(`Transformation '${item.name}' `.green + 'finished'.green.bold);
+      Verbose.log('---------------------');
+    }
   }
+
+  const result: string = CodeGeneration.generate(p);
+
+  console.log(result);
+} else {
+  console.log("Program with 'eval' or 'with' command cannot be obfuscated".red);
 }
-
-const result: string = escodegen.generate(p, {
-  format: {
-    renumber: true,
-    hexadecimal: true,
-    escapeless: true,
-    compact: true,
-    semicolons: false,
-    parentheses: false
-  },
-  verbatim: 'x-verbatim-property'
-});
-
-console.log(result);

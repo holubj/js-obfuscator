@@ -11,12 +11,13 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 require("colors");
-var escodegen_1 = __importDefault(require("escodegen"));
 var espree_1 = __importDefault(require("espree"));
 var fs = __importStar(require("fs"));
+var codeGeneration_1 = require("./codeGeneration");
 var configuration_1 = require("./configuration");
 var identifiers_1 = require("./identifiers");
 var insertPosition_1 = require("./insertPosition");
+var transformations_1 = require("./transformations");
 Error.stackTraceLimit = Infinity;
 if (process.argv.length < 3) {
     console.log('Usage: node ' + process.argv[1] + ' FILENAME');
@@ -34,29 +35,24 @@ catch (err) {
 var p = espree_1.default.parse(code);
 // p = esmangle.optimize(p, null);
 // p = esmangle.mangle(p);
-identifiers_1.Identifiers.init(p);
-insertPosition_1.InsertPosition.init(p);
-for (var _i = 0, _a = configuration_1.configuration.stream; _i < _a.length; _i++) {
-    var item = _a[_i];
-    if (item.enabled) {
-        var transformationClass = require(item.file);
-        var transformation = new transformationClass(p, item.settings);
-        configuration_1.Verbose.log(("Transformation '" + item.name + "' ").green + 'started'.green.bold);
-        p = transformation.apply();
-        configuration_1.Verbose.log(("Transformation '" + item.name + "' ").green + 'finished'.green.bold);
-        configuration_1.Verbose.log('---------------------');
+if (transformations_1.isSuitable(p)) {
+    identifiers_1.Identifiers.init(p);
+    insertPosition_1.InsertPosition.init(p);
+    for (var _i = 0, _a = configuration_1.configuration.stream; _i < _a.length; _i++) {
+        var item = _a[_i];
+        if (item.enabled) {
+            var transformationClass = require(item.file);
+            var transformation = new transformationClass(p, item.settings);
+            configuration_1.Verbose.log(("Transformation '" + item.name + "' ").green + 'started'.green.bold);
+            p = transformation.apply();
+            configuration_1.Verbose.log(("Transformation '" + item.name + "' ").green + 'finished'.green.bold);
+            configuration_1.Verbose.log('---------------------');
+        }
     }
+    var result = codeGeneration_1.CodeGeneration.generate(p);
+    console.log(result);
 }
-var result = escodegen_1.default.generate(p, {
-    format: {
-        renumber: true,
-        hexadecimal: true,
-        escapeless: true,
-        compact: true,
-        semicolons: false,
-        parentheses: false
-    },
-    verbatim: 'x-verbatim-property'
-});
-console.log(result);
+else {
+    console.log("Program with 'eval' or 'with' command cannot be obfuscated".red);
+}
 //# sourceMappingURL=obfuscation.js.map
