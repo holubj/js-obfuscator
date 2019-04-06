@@ -106,6 +106,9 @@ var LiteralObfuscation = /** @class */ (function (_super) {
      */
     LiteralObfuscation.prototype.moveLiteralsToLiteralArray = function () {
         var _this = this;
+        if (this.literals.length === 0) {
+            return;
+        }
         var count = 0;
         var shift = Math.floor(Math.random() * 100);
         var literalArrayIdentifier = identifiers_1.Identifiers.generate();

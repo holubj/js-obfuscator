@@ -86,6 +86,10 @@ class LiteralObfuscation extends BaseTransformation {
    * @memberof LiteralObfuscation
    */
   protected moveLiteralsToLiteralArray(): void {
+    if (this.literals.length === 0) {
+      return;
+    }
+
     let count: number = 0;
     const shift: number = Math.floor(Math.random() * 100);
     const literalArrayIdentifier: string = Identifiers.generate();
