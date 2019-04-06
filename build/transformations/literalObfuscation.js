@@ -117,7 +117,7 @@ var LiteralObfuscation = /** @class */ (function (_super) {
             enter: function (node) {
                 if (node.type === 'Literal' && typeof node.value === 'string' && node.value !== 'use strict') {
                     // some literals might be omitted based on threshold settings
-                    if (_this.literals.indexOf(node.value) > -1) {
+                    if (_this.literals.includes(node.value)) {
                         count++;
                         var index = _this.literals.findIndex(function (literal) { return literal === node.value; });
                         return _this.generateAccessFuncCall(accessFuncIdentifier, index + shift);

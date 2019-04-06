@@ -99,7 +99,7 @@ class LiteralObfuscation extends BaseTransformation {
       enter: (node: estree.Node): estree.Node | void => {
         if (node.type === 'Literal' && typeof node.value === 'string' && node.value !== 'use strict') {
           // some literals might be omitted based on threshold settings
-          if (this.literals.indexOf(node.value) > -1) {
+          if (this.literals.includes(node.value)) {
             count++;
             const index: number = this.literals.findIndex((literal: string) => literal === node.value);
             return this.generateAccessFuncCall(accessFuncIdentifier, index + shift);
