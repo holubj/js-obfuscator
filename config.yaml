@@ -40,3 +40,8 @@ stream:
   - name: Function Definition Reordering
     file: ./transformations/functionDefinitionReordering.js
     enabled: true
+  - name: Eval Outlining
+    file: ./transformations/evalOutlining.js
+    enabled: true
+    settings:
+      threshold: 0.1 # ~10% of expressions outlined to eval
