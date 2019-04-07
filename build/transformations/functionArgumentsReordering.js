@@ -139,7 +139,7 @@ var FunctionArgumentReordering = /** @class */ (function (_super) {
         var _this = this;
         var simpleCalls = true;
         estraverse.traverse(this.ast, {
-            enter: function (node) {
+            enter: function (node, parent) {
                 if (node.type === 'CallExpression' && node.callee.type === 'Identifier' && node.callee.name === funcIdent) {
                     if (node.arguments.length !== paramsCount) {
                         simpleCalls = false;
@@ -149,6 +149,13 @@ var FunctionArgumentReordering = /** @class */ (function (_super) {
                         if (_this.containsAssignOrUpdateExpression(argument)) {
                             simpleCalls = false;
                         }
+                    }
+                }
+                if (node.type === 'Identifier' && node.name === funcIdent) {
+                    if (!parent ||
+                        (!(parent.type === 'CallExpression' && parent.callee.type === 'Identifier' && parent.callee.name === funcIdent) &&
+                            parent.type !== 'FunctionDeclaration')) {
+                        simpleCalls = false;
                     }
                 }
             }

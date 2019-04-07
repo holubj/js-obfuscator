@@ -123,7 +123,7 @@ class FunctionArgumentReordering extends BaseTransformation {
     let simpleCalls: boolean = true;
 
     estraverse.traverse(this.ast, {
-      enter: (node: estree.Node): void => {
+      enter: (node: estree.Node, parent: estree.Node | null): void => {
         if (node.type === 'CallExpression' && node.callee.type === 'Identifier' && node.callee.name === funcIdent) {
           if (node.arguments.length !== paramsCount) {
             simpleCalls = false;
@@ -132,6 +132,15 @@ class FunctionArgumentReordering extends BaseTransformation {
             if (this.containsAssignOrUpdateExpression(argument)) {
               simpleCalls = false;
             }
+          }
+        }
+        if (node.type === 'Identifier' && node.name === funcIdent) {
+          if (
+            !parent ||
+            (!(parent.type === 'CallExpression' && parent.callee.type === 'Identifier' && parent.callee.name === funcIdent) &&
+              parent.type !== 'FunctionDeclaration')
+          ) {
+            simpleCalls = false;
           }
         }
       }
