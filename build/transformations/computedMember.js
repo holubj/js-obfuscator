@@ -36,7 +36,7 @@ var ComputedMember = /** @class */ (function (_super) {
         estraverse.replace(this.ast, {
             enter: function (node, parent) {
                 if (node.type === 'Identifier') {
-                    if (parent && parent.type === 'MemberExpression' && parent.property === node) {
+                    if (parent && parent.type === 'MemberExpression' && parent.property === node && parent.computed === false) {
                         parent.computed = true;
                         count++;
                         return {

@@ -15,7 +15,7 @@ class ComputedMember extends BaseTransformation {
     estraverse.replace(this.ast, {
       enter: (node: estree.Node, parent: estree.Node | null): estree.Node | void => {
         if (node.type === 'Identifier') {
-          if (parent && parent.type === 'MemberExpression' && parent.property === node) {
+          if (parent && parent.type === 'MemberExpression' && parent.property === node && parent.computed === false) {
             parent.computed = true;
             count++;
             return {
