@@ -51,7 +51,7 @@ var OperatorOutlining = /** @class */ (function (_super) {
         if (this.settings.unaryOperators) {
             this.outlineUnaryOperators();
         }
-        if (this.settings.assigmentOperators) {
+        if (this.settings.assignmentOperators) {
             this.replaceAssignmentOperators();
         }
         if (this.settings.binaryOperators) {
@@ -103,7 +103,7 @@ var OperatorOutlining = /** @class */ (function (_super) {
         estraverse.replace(this.ast, {
             enter: function (node) {
                 if (node.type === 'UnaryExpression' && node.operator !== 'delete') {
-                    var callExpression = {
+                    return {
                         type: 'CallExpression',
                         callee: {
                             type: 'Identifier',
@@ -111,7 +111,6 @@ var OperatorOutlining = /** @class */ (function (_super) {
                         },
                         arguments: [node.argument]
                     };
-                    return callExpression;
                 }
             }
         });
@@ -155,7 +154,7 @@ var OperatorOutlining = /** @class */ (function (_super) {
             enter: function (node) {
                 if (node.type === 'AssignmentExpression') {
                     if (node.operator !== '=' && node.left.type === 'Identifier') {
-                        var replacement = {
+                        return {
                             type: 'AssignmentExpression',
                             operator: '=',
                             left: node.left,
@@ -166,7 +165,6 @@ var OperatorOutlining = /** @class */ (function (_super) {
                                 right: node.right
                             }
                         };
-                        return replacement;
                     }
                 }
             }
@@ -181,7 +179,7 @@ var OperatorOutlining = /** @class */ (function (_super) {
         estraverse.replace(this.ast, {
             enter: function (node) {
                 if (node.type === 'BinaryExpression') {
-                    var callExpression = {
+                    return {
                         type: 'CallExpression',
                         callee: {
                             type: 'Identifier',
@@ -189,7 +187,6 @@ var OperatorOutlining = /** @class */ (function (_super) {
                         },
                         arguments: [node.left, node.right]
                     };
-                    return callExpression;
                 }
             }
         });

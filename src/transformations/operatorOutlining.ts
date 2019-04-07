@@ -28,7 +28,7 @@ class OperatorOutlining extends BaseTransformation {
     if (this.settings.unaryOperators) {
       this.outlineUnaryOperators();
     }
-    if (this.settings.assigmentOperators) {
+    if (this.settings.assignmentOperators) {
       this.replaceAssignmentOperators();
     }
     if (this.settings.binaryOperators) {
@@ -84,7 +84,7 @@ class OperatorOutlining extends BaseTransformation {
     estraverse.replace(this.ast, {
       enter: (node: estree.Node): estree.Node | void => {
         if (node.type === 'UnaryExpression' && node.operator !== 'delete') {
-          const callExpression: estree.CallExpression = {
+          return {
             type: 'CallExpression',
             callee: {
               type: 'Identifier',
@@ -92,8 +92,6 @@ class OperatorOutlining extends BaseTransformation {
             },
             arguments: [node.argument]
           };
-
-          return callExpression;
         }
       }
     });
@@ -141,7 +139,7 @@ class OperatorOutlining extends BaseTransformation {
       enter: (node: estree.Node): estree.Node | void => {
         if (node.type === 'AssignmentExpression') {
           if (node.operator !== '=' && node.left.type === 'Identifier') {
-            const replacement: estree.AssignmentExpression = {
+            return {
               type: 'AssignmentExpression',
               operator: '=',
               left: node.left,
@@ -152,8 +150,6 @@ class OperatorOutlining extends BaseTransformation {
                 right: node.right
               }
             };
-
-            return replacement;
           }
         }
       }
@@ -168,7 +164,7 @@ class OperatorOutlining extends BaseTransformation {
     estraverse.replace(this.ast, {
       enter: (node: estree.Node): estree.Node | void => {
         if (node.type === 'BinaryExpression') {
-          const callExpression: estree.CallExpression = {
+          return {
             type: 'CallExpression',
             callee: {
               type: 'Identifier',
@@ -176,8 +172,6 @@ class OperatorOutlining extends BaseTransformation {
             },
             arguments: [node.left, node.right]
           };
-
-          return callExpression;
         }
       }
     });

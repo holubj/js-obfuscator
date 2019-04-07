@@ -32,7 +32,8 @@ class FunctionArgumentReordering extends BaseTransformation {
    * @memberof FunctionArgumentReordering
    */
   protected reorderArguments(funcIdent: string, paramsCount: number): void {
-    const newOrder: number[] = shuffle([0, 1, 2]);
+    let newOrder: number[] = Array.from({ length: paramsCount }, (x: number, i: number) => i);
+    newOrder = shuffle(newOrder);
 
     estraverse.replace(this.ast, {
       enter: (node: estree.Node): estree.Node | void => {

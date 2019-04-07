@@ -1,7 +1,9 @@
 'use strict';
 
 function args(a, b, c) {
-    return a - b - c;
+    var d = a - b - c;
+    d += 5;
+    return d;
 }
 
 var a = 5;

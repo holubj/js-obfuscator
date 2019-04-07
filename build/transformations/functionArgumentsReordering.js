@@ -57,7 +57,8 @@ var FunctionArgumentReordering = /** @class */ (function (_super) {
      * @memberof FunctionArgumentReordering
      */
     FunctionArgumentReordering.prototype.reorderArguments = function (funcIdent, paramsCount) {
-        var newOrder = shuffle_array_1.default([0, 1, 2]);
+        var newOrder = Array.from({ length: paramsCount }, function (x, i) { return i; });
+        newOrder = shuffle_array_1.default(newOrder);
         estraverse.replace(this.ast, {
             enter: function (node) {
                 if (node.type === 'FunctionDeclaration' && node.id !== null && node.id.name === funcIdent) {
