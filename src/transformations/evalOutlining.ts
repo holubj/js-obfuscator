@@ -18,7 +18,7 @@ class EvalOutlining extends BaseTransformation {
     estraverse.replace(this.ast, {
       enter: (node: estree.Node, parent: estree.Node | null): estree.Node | void => {
         if (parent !== null && parent.type === 'BlockStatement') {
-          if (this.forbiddenStatements.includes(node.type)) {
+          if (!this.isSuitable(node)) {
             return;
           }
           if (Math.random() <= this.settings.threshold) {
@@ -46,6 +46,26 @@ class EvalOutlining extends BaseTransformation {
 
     Verbose.log(`${count} expressions outlined to eval`.yellow);
     return this.ast;
+  }
+
+  /**
+   * @protected
+   * @param {estree.Node} expression
+   * @returns {boolean}
+   * @memberof EvalOutlining
+   */
+  protected isSuitable(expression: estree.Node): boolean {
+    let suitable: boolean = true;
+
+    estraverse.traverse(expression, {
+      enter: (node: estree.Node): void => {
+        if (this.forbiddenStatements.includes(node.type)) {
+          suitable = false;
+        }
+      }
+    });
+
+    return suitable;
   }
 }
 

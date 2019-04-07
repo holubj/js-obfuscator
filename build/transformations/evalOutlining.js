@@ -41,7 +41,7 @@ var EvalOutlining = /** @class */ (function (_super) {
         estraverse.replace(this.ast, {
             enter: function (node, parent) {
                 if (parent !== null && parent.type === 'BlockStatement') {
-                    if (_this.forbiddenStatements.includes(node.type)) {
+                    if (!_this.isSuitable(node)) {
                         return;
                     }
                     if (Math.random() <= _this.settings.threshold) {
@@ -68,6 +68,24 @@ var EvalOutlining = /** @class */ (function (_super) {
         });
         configuration_1.Verbose.log((count + " expressions outlined to eval").yellow);
         return this.ast;
+    };
+    /**
+     * @protected
+     * @param {estree.Node} expression
+     * @returns {boolean}
+     * @memberof EvalOutlining
+     */
+    EvalOutlining.prototype.isSuitable = function (expression) {
+        var _this = this;
+        var suitable = true;
+        estraverse.traverse(expression, {
+            enter: function (node) {
+                if (_this.forbiddenStatements.includes(node.type)) {
+                    suitable = false;
+                }
+            }
+        });
+        return suitable;
     };
     return EvalOutlining;
 }(transformations_1.BaseTransformation));
