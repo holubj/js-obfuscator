@@ -34,11 +34,14 @@ stream:
   - name: Unicode Literal
     file: ./transformations/unicodeLiteral.js
     enabled: true
+  - name: Function Definition Reordering
+    file: ./transformations/functionDefinitionReordering.js
+    enabled: true
   - name: Function Arguments Reordering
     file: ./transformations/functionArgumentsReordering.js
     enabled: true
-  - name: Function Definition Reordering
-    file: ./transformations/functionDefinitionReordering.js
+  - name: Function Merging
+    file: ./transformations/functionMerging.js
     enabled: true
   - name: Eval Outlining
     file: ./transformations/evalOutlining.js

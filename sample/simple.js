@@ -1,5 +1,18 @@
 'use strict';
 
+function add(a, b) {
+    console.log('test');
+    return a + b + 10;
+}
+
+function sub(a, b) {
+    return a - b - 420;
+}
+
+console.log(add(5, 5));
+console.log(sub(5, 5));
+
+/*
 function args(a, b, c) {
     var d = a - b - c;
     d += 5;
