@@ -17,20 +17,20 @@ stream:
     file: ./transformations/expressionObfuscation.js
     enabled: true
     settings:
-      booleanThreshold: 0.8 # 80% of booleans obfuscated
-      undefinedThreshold: 0.8 # 80% of 'undefined' expression obfuscated
+      booleanChance: 0.8 # 80% of booleans obfuscated
+      undefinedChance: 0.8 # 80% of 'undefined' expression obfuscated
   - name: Number Obfuscation
     file: ./transformations/numberObfuscation.js
     enabled: true
     settings:
-      threshold: 0.5 # 50% of numbers obfuscated
+      chance: 0.5 # 50% of numbers obfuscated
   - name: Literal Obfuscation
     file: ./transformations/literalObfuscation.js
     enabled: true
     settings:
-      splitThreshold: 0.25 # ~25% of strings splitted
-      arrayThreshold: 0.85 # ~85% of strings moved to array
-      base64Threshold: 0.25 # ~25% of strings encoded to base64
+      splitChance: 0.25 # ~25% of strings splitted
+      arrayChance: 0.85 # ~85% of strings moved to array
+      base64Chance: 0.25 # ~25% of strings encoded to base64
   - name: Unicode Literal
     file: ./transformations/unicodeLiteral.js
     enabled: true
@@ -47,9 +47,9 @@ stream:
     file: ./transformations/evalOutlining.js
     enabled: true
     settings:
-      threshold: 0.1 # ~10% of expressions outlined to eval
+      chance: 0.1 # ~10% of expressions outlined to eval
   - name: Code Encryption & Integrity
     file: ./transformations/codeEncryption.js
     enabled: true
     settings:
-      threshold: 0.25 # ~25% of blocks encrypted
+      chance: 0.25 # ~25% of blocks encrypted

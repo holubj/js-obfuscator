@@ -45,7 +45,7 @@ class ExpressionObfuscation extends BaseTransformation {
     estraverse.replace(this.ast, {
       enter: (node: estree.Node): estree.Node | void => {
         if (node.type === 'Literal' && typeof node.value === 'boolean') {
-          if (Math.random() <= this.settings.booleanThreshold) {
+          if (Math.random() <= this.settings.booleanChance) {
             booleanCount++;
             if (node.value === true) {
               return this.trueExpression;
@@ -55,7 +55,7 @@ class ExpressionObfuscation extends BaseTransformation {
           }
         } else if (node.type === 'Identifier' && node.name === 'undefined') {
           const rand: number = Math.random();
-          if (rand <= this.settings.undefinedThreshold) {
+          if (rand <= this.settings.undefinedChance) {
             undefinedCount++;
             return this.undefinedExpression;
           }

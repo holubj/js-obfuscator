@@ -63,7 +63,7 @@ var CodeEncryption = /** @class */ (function (_super) {
                     if (!_this.isSuitableBlock(node) || _this.sealedTopLevelFunctions.includes(currentTopLevelFunction)) {
                         return;
                     }
-                    if (Math.random() <= _this.settings.threshold) {
+                    if (Math.random() <= _this.settings.chance) {
                         var keyFuncDecl = _this.findSuitableFunction(currentTopLevelFunction);
                         if (keyFuncDecl === undefined) {
                             return;
@@ -88,17 +88,17 @@ var CodeEncryption = /** @class */ (function (_super) {
                         var originalVerboseState = configuration_1.Verbose.isEnabled;
                         configuration_1.Verbose.isEnabled = false;
                         new literalObfuscation_1.default(program, {
-                            splitThreshold: 0.8,
-                            arrayThreshold: 0,
-                            base64Threshold: 0.8
+                            splitChance: 0.8,
+                            arrayChance: 0,
+                            base64Chance: 0.8
                         }).apply();
                         new unicodeLiteral_1.default(program).apply();
                         new expressionObfuscation_1.default(program, {
-                            booleanThreshold: 0.8,
-                            undefinedThreshold: 0.8
+                            booleanChance: 0.8,
+                            undefinedChance: 0.8
                         }).apply();
                         new numberObfuscation_1.default(program, {
-                            threshold: 0.5
+                            chance: 0.5
                         }).apply();
                         configuration_1.Verbose.isEnabled = originalVerboseState;
                         return program.body[0];

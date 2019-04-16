@@ -38,7 +38,7 @@ class CodeEncryption extends BaseTransformation {
           if (!this.isSuitableBlock(node) || this.sealedTopLevelFunctions.includes(currentTopLevelFunction)) {
             return;
           }
-          if (Math.random() <= this.settings.threshold) {
+          if (Math.random() <= this.settings.chance) {
             const keyFuncDecl: estree.FunctionDeclaration | undefined = this.findSuitableFunction(currentTopLevelFunction);
             if (keyFuncDecl === undefined) {
               return;
@@ -71,20 +71,20 @@ class CodeEncryption extends BaseTransformation {
             Verbose.isEnabled = false;
 
             new LiteralObfuscation(program, {
-              splitThreshold: 0.8,
-              arrayThreshold: 0,
-              base64Threshold: 0.8
+              splitChance: 0.8,
+              arrayChance: 0,
+              base64Chance: 0.8
             }).apply();
 
             new UnicodeLiteral(program).apply();
 
             new ExpressionObfuscation(program, {
-              booleanThreshold: 0.8,
-              undefinedThreshold: 0.8
+              booleanChance: 0.8,
+              undefinedChance: 0.8
             }).apply();
 
             new NumberObufscation(program, {
-              threshold: 0.5
+              chance: 0.5
             }).apply();
 
             Verbose.isEnabled = originalVerboseState;

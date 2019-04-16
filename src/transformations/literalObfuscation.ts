@@ -35,7 +35,7 @@ class LiteralObfuscation extends BaseTransformation {
     estraverse.replace(this.ast, {
       leave: (node: estree.Node): estree.Node | void => {
         if (node.type === 'Literal' && typeof node.value === 'string' && node.value !== 'use strict') {
-          if (Math.random() <= this.settings.splitThreshold) {
+          if (Math.random() <= this.settings.splitChance) {
             if (node.value.length >= 2) {
               count++;
               const cut: number = Math.floor(Math.random() * (node.value.length - 1)) + 1;
@@ -69,7 +69,7 @@ class LiteralObfuscation extends BaseTransformation {
     estraverse.replace(this.ast, {
       enter: (node: estree.Node): estree.Node | void => {
         if (node.type === 'Literal' && typeof node.value === 'string' && node.value !== 'use strict') {
-          if (Math.random() <= this.settings.arrayThreshold) {
+          if (Math.random() <= this.settings.arrayChance) {
             if (!this.literals.find((literal: string) => literal === node.value)) {
               this.literals.push(node.value);
             }
@@ -98,7 +98,7 @@ class LiteralObfuscation extends BaseTransformation {
     estraverse.replace(this.ast, {
       enter: (node: estree.Node): estree.Node | void => {
         if (node.type === 'Literal' && typeof node.value === 'string' && node.value !== 'use strict') {
-          // some literals might be omitted based on threshold settings
+          // some literals might be omitted based on chance settings
           if (this.literals.includes(node.value)) {
             count++;
             const index: number = this.literals.findIndex((literal: string) => literal === node.value);
@@ -119,7 +119,7 @@ class LiteralObfuscation extends BaseTransformation {
     estraverse.replace(this.ast, {
       leave: (node: estree.Node): estree.Node | void => {
         if (node.type === 'Literal' && typeof node.value === 'string' && node.value !== 'use strict') {
-          if (Math.random() <= this.settings.base64Threshold && !/[^A-Za-z0-9 ]/.test(node.value)) {
+          if (Math.random() <= this.settings.base64Chance && !/[^A-Za-z0-9 ]/.test(node.value)) {
             count++;
 
             return {

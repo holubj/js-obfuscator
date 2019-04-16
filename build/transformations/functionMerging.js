@@ -84,7 +84,11 @@ var FunctionMerging = /** @class */ (function (_super) {
         firstDeclaration = this.mapNewParams(firstDeclaration, unifiedParams);
         secondDeclaration = this.mapNewParams(secondDeclaration, unifiedParams);
         var firstLiteral = this.extractLiteral(firstDeclaration, 0, decidingVariable);
-        var secondLiteral = this.extractLiteral(secondDeclaration, 1, decidingVariable);
+        var defaultSecondLiteral = 1;
+        if (firstLiteral.value === 1) {
+            defaultSecondLiteral = 0;
+        }
+        var secondLiteral = this.extractLiteral(secondDeclaration, defaultSecondLiteral, decidingVariable);
         this.updateFuncCalls(firstDeclaration, ident, firstLiteral);
         this.updateFuncCalls(secondDeclaration, ident, secondLiteral);
         // update also possible recursive calls

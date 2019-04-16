@@ -44,7 +44,7 @@ var EvalOutlining = /** @class */ (function (_super) {
                     if (!_this.isSuitable(node)) {
                         return;
                     }
-                    if (Math.random() <= _this.settings.threshold) {
+                    if (Math.random() <= _this.settings.chance) {
                         count++;
                         return {
                             type: 'ExpressionStatement',

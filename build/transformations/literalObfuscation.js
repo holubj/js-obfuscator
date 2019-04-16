@@ -58,7 +58,7 @@ var LiteralObfuscation = /** @class */ (function (_super) {
         estraverse.replace(this.ast, {
             leave: function (node) {
                 if (node.type === 'Literal' && typeof node.value === 'string' && node.value !== 'use strict') {
-                    if (Math.random() <= _this.settings.splitThreshold) {
+                    if (Math.random() <= _this.settings.splitChance) {
                         if (node.value.length >= 2) {
                             count++;
                             var cut = Math.floor(Math.random() * (node.value.length - 1)) + 1;
@@ -90,7 +90,7 @@ var LiteralObfuscation = /** @class */ (function (_super) {
         estraverse.replace(this.ast, {
             enter: function (node) {
                 if (node.type === 'Literal' && typeof node.value === 'string' && node.value !== 'use strict') {
-                    if (Math.random() <= _this.settings.arrayThreshold) {
+                    if (Math.random() <= _this.settings.arrayChance) {
                         if (!_this.literals.find(function (literal) { return literal === node.value; })) {
                             _this.literals.push(node.value);
                         }
@@ -116,7 +116,7 @@ var LiteralObfuscation = /** @class */ (function (_super) {
         estraverse.replace(this.ast, {
             enter: function (node) {
                 if (node.type === 'Literal' && typeof node.value === 'string' && node.value !== 'use strict') {
-                    // some literals might be omitted based on threshold settings
+                    // some literals might be omitted based on chance settings
                     if (_this.literals.includes(node.value)) {
                         count++;
                         var index = _this.literals.findIndex(function (literal) { return literal === node.value; });
@@ -135,7 +135,7 @@ var LiteralObfuscation = /** @class */ (function (_super) {
         estraverse.replace(this.ast, {
             leave: function (node) {
                 if (node.type === 'Literal' && typeof node.value === 'string' && node.value !== 'use strict') {
-                    if (Math.random() <= _this.settings.base64Threshold && !/[^A-Za-z0-9 ]/.test(node.value)) {
+                    if (Math.random() <= _this.settings.base64Chance && !/[^A-Za-z0-9 ]/.test(node.value)) {
                         count++;
                         return {
                             type: 'CallExpression',

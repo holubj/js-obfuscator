@@ -38,7 +38,7 @@ class NumberObfuscation extends BaseTransformation {
       enter: (node: estree.Node): estree.Node | void => {
         if (node.type === 'Literal' && typeof node.value === 'number' && Number.isInteger(node.value)) {
           if (node.value >= 0 && node.value < 10) {
-            if (Math.random() <= this.settings.threshold) {
+            if (Math.random() <= this.settings.chance) {
               count++;
               return this.getNumberExpression(node.value);
             }

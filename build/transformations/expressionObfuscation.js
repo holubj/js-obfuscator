@@ -66,7 +66,7 @@ var ExpressionObfuscation = /** @class */ (function (_super) {
         estraverse.replace(this.ast, {
             enter: function (node) {
                 if (node.type === 'Literal' && typeof node.value === 'boolean') {
-                    if (Math.random() <= _this.settings.booleanThreshold) {
+                    if (Math.random() <= _this.settings.booleanChance) {
                         booleanCount++;
                         if (node.value === true) {
                             return _this.trueExpression;
@@ -78,7 +78,7 @@ var ExpressionObfuscation = /** @class */ (function (_super) {
                 }
                 else if (node.type === 'Identifier' && node.name === 'undefined') {
                     var rand = Math.random();
-                    if (rand <= _this.settings.undefinedThreshold) {
+                    if (rand <= _this.settings.undefinedChance) {
                         undefinedCount++;
                         return _this.undefinedExpression;
                     }

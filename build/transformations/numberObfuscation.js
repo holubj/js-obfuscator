@@ -64,7 +64,7 @@ var NumberObfuscation = /** @class */ (function (_super) {
             enter: function (node) {
                 if (node.type === 'Literal' && typeof node.value === 'number' && Number.isInteger(node.value)) {
                     if (node.value >= 0 && node.value < 10) {
-                        if (Math.random() <= _this.settings.threshold) {
+                        if (Math.random() <= _this.settings.chance) {
                             count++;
                             return _this.getNumberExpression(node.value);
                         }

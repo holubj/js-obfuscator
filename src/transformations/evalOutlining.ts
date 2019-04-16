@@ -21,7 +21,7 @@ class EvalOutlining extends BaseTransformation {
           if (!this.isSuitable(node)) {
             return;
           }
-          if (Math.random() <= this.settings.threshold) {
+          if (Math.random() <= this.settings.chance) {
             count++;
             return {
               type: 'ExpressionStatement',
