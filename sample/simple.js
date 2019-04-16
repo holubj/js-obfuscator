@@ -1,12 +1,27 @@
 'use strict';
 
 function add(a, b) {
-    console.log('test');
+    function test(c, d) {
+        if (true)
+            console.log(c, d);
+    }
+    test(1, 1);
+
     return a + b + 10;
 }
 
 function sub(a, b) {
-    return a - b - 420;
+    return a - b - 1;
+}
+
+if (5 > 9) {
+    {
+        {
+            console.log('a');
+        }
+    }
+} else {
+    console.log('b');
 }
 
 console.log(add(5, 5));

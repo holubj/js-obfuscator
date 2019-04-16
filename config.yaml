@@ -48,3 +48,8 @@ stream:
     enabled: true
     settings:
       threshold: 0.1 # ~10% of expressions outlined to eval
+  - name: Code Encryption & Integrity
+    file: ./transformations/codeEncryption.js
+    enabled: true
+    settings:
+      threshold: 0.25 # ~25% of blocks encrypted
