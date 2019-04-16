@@ -70,7 +70,12 @@ class FunctionMerging extends BaseTransformation {
     secondDeclaration = this.mapNewParams(secondDeclaration, unifiedParams);
 
     const firstLiteral: estree.Literal = this.extractLiteral(firstDeclaration, 0, decidingVariable);
-    const secondLiteral: estree.Literal = this.extractLiteral(secondDeclaration, 1, decidingVariable);
+
+    let defaultSecondLiteral: number = 1;
+    if (firstLiteral.value === 1) {
+      defaultSecondLiteral = 0;
+    }
+    const secondLiteral: estree.Literal = this.extractLiteral(secondDeclaration, defaultSecondLiteral, decidingVariable);
 
     this.updateFuncCalls(firstDeclaration, ident, firstLiteral);
     this.updateFuncCalls(secondDeclaration, ident, secondLiteral);
