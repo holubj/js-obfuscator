@@ -26,7 +26,7 @@ var identifiers_1 = require("../identifiers");
 var insertPosition_1 = require("../insertPosition");
 var transformations_1 = require("../transformations");
 /**
- * Unary Operators "-" | "+" | "!" | "~" | "typeof" | "void"
+ * Unary Operators "-" | "+" | "!" | "~" | "void"
  * Binary Operators "==" | "!=" | "===" | "!==" | "<" | "<=" | ">" | ">=" | "<<" | ">>" | ">>>" | "+" | "-" | "*" | "/" | "%" | "**" | "|" | "^" | "&" | "in" | "instanceof"
  * Assignment Operators (only when left side is identifier) +=" | "-=" | "*=" | "/=" | "%=" | "**=" | "<<=" | ">>=" | ">>>=" | "|=" | "^=" | "&="
  *
@@ -40,6 +40,7 @@ var OperatorOutlining = /** @class */ (function (_super) {
         _this.unaryPrefix = 'unary ';
         _this.funcIdentifiers = {};
         _this.usedIdentifiers = new Set();
+        _this.forbiddenUnaryOperators = ['delete', 'typeof'];
         _this.doLookup = true;
         return _this;
     }
@@ -102,7 +103,7 @@ var OperatorOutlining = /** @class */ (function (_super) {
         var _this = this;
         estraverse.replace(this.ast, {
             enter: function (node) {
-                if (node.type === 'UnaryExpression' && node.operator !== 'delete') {
+                if (node.type === 'UnaryExpression' && !_this.forbiddenUnaryOperators.includes(node.operator)) {
                     return {
                         type: 'CallExpression',
                         callee: {

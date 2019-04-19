@@ -7,7 +7,7 @@ import { InsertPosition } from '../insertPosition';
 import { BaseTransformation } from '../transformations';
 
 /**
- * Unary Operators "-" | "+" | "!" | "~" | "typeof" | "void"
+ * Unary Operators "-" | "+" | "!" | "~" | "void"
  * Binary Operators "==" | "!=" | "===" | "!==" | "<" | "<=" | ">" | ">=" | "<<" | ">>" | ">>>" | "+" | "-" | "*" | "/" | "%" | "**" | "|" | "^" | "&" | "in" | "instanceof"
  * Assignment Operators (only when left side is identifier) +=" | "-=" | "*=" | "/=" | "%=" | "**=" | "<<=" | ">>=" | ">>>=" | "|=" | "^=" | "&="
  *
@@ -18,6 +18,7 @@ class OperatorOutlining extends BaseTransformation {
   protected readonly unaryPrefix: string = 'unary ';
   protected funcIdentifiers: { [operator: string]: string } = {};
   protected usedIdentifiers: Set<string> = new Set<string>();
+  protected readonly forbiddenUnaryOperators: string[] = ['delete', 'typeof'];
   protected doLookup: boolean = true;
 
   /**
@@ -83,7 +84,7 @@ class OperatorOutlining extends BaseTransformation {
   protected outlineUnaryOperators(): void {
     estraverse.replace(this.ast, {
       enter: (node: estree.Node): estree.Node | void => {
-        if (node.type === 'UnaryExpression' && node.operator !== 'delete') {
+        if (node.type === 'UnaryExpression' && !this.forbiddenUnaryOperators.includes(node.operator)) {
           return {
             type: 'CallExpression',
             callee: {
