@@ -12,6 +12,14 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
+    result["default"] = mod;
+    return result;
+};
+var estraverse = __importStar(require("estraverse"));
 var identifiers_1 = require("../identifiers");
 var insertPosition_1 = require("../insertPosition");
 var transformations_1 = require("../transformations");
@@ -27,6 +35,7 @@ var ConsoleRedefinition = /** @class */ (function (_super) {
      * @memberof ConsoleRedefinition
      */
     ConsoleRedefinition.prototype.apply = function () {
+        var _this = this;
         var _a;
         var statements = [];
         statements.push(this.generateConsoleDeclaration());
@@ -37,6 +46,25 @@ var ConsoleRedefinition = /** @class */ (function (_super) {
             statements.push(this.generateAssignment(method, dummyFuncIdentifier));
         }
         (_a = this.ast.body).splice.apply(_a, [insertPosition_1.InsertPosition.get(), 0].concat(statements));
+        estraverse.replace(this.ast, {
+            enter: function (node) {
+                if (node.type === 'CallExpression' &&
+                    node.callee.type === 'MemberExpression' &&
+                    node.callee.object.type === 'Identifier' &&
+                    node.callee.object.name === 'console' &&
+                    ((node.callee.property.type === 'Identifier' && node.callee.property.name === 'log') ||
+                        (node.callee.property.type === 'Literal' && node.callee.property.value === 'log'))) {
+                    for (var _i = 0, _a = node.arguments; _i < _a.length; _i++) {
+                        var argument = _a[_i];
+                        if (_this.containsAssignOrUpdateExpression(argument)) {
+                            return node;
+                        }
+                    }
+                    node.arguments = [];
+                    return node;
+                }
+            }
+        });
         return this.ast;
     };
     /**
@@ -104,6 +132,23 @@ var ConsoleRedefinition = /** @class */ (function (_super) {
                 right: { type: 'Identifier', name: funcIdentifier }
             }
         };
+    };
+    /**
+     * @protected
+     * @param {estree.Node} search
+     * @returns {boolean}
+     * @memberof ConsoleRedefinition
+     */
+    ConsoleRedefinition.prototype.containsAssignOrUpdateExpression = function (search) {
+        var contains = false;
+        estraverse.traverse(search, {
+            enter: function (node) {
+                if (node.type === 'AssignmentExpression' || node.type === 'UpdateExpression' || node.type === 'CallExpression') {
+                    contains = true;
+                }
+            }
+        });
+        return contains;
     };
     return ConsoleRedefinition;
 }(transformations_1.BaseTransformation));

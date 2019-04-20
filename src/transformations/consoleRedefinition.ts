@@ -1,3 +1,4 @@
+import * as estraverse from 'estraverse';
 import * as estree from 'estree';
 import { Identifiers } from '../identifiers';
 import { InsertPosition } from '../insertPosition';
@@ -23,6 +24,28 @@ class ConsoleRedefinition extends BaseTransformation {
     }
 
     this.ast.body.splice(InsertPosition.get(), 0, ...statements);
+
+    estraverse.replace(this.ast, {
+      enter: (node: estree.Node): estree.Node | void => {
+        if (
+          node.type === 'CallExpression' &&
+          node.callee.type === 'MemberExpression' &&
+          node.callee.object.type === 'Identifier' &&
+          node.callee.object.name === 'console' &&
+          ((node.callee.property.type === 'Identifier' && node.callee.property.name === 'log') ||
+            (node.callee.property.type === 'Literal' && node.callee.property.value === 'log'))
+        ) {
+          for (const argument of node.arguments) {
+            if (this.containsAssignOrUpdateExpression(argument)) {
+              return node;
+            }
+          }
+
+          node.arguments = [];
+          return node;
+        }
+      }
+    });
 
     return this.ast;
   }
@@ -94,6 +117,26 @@ class ConsoleRedefinition extends BaseTransformation {
         right: { type: 'Identifier', name: funcIdentifier }
       }
     };
+  }
+
+  /**
+   * @protected
+   * @param {estree.Node} search
+   * @returns {boolean}
+   * @memberof ConsoleRedefinition
+   */
+  protected containsAssignOrUpdateExpression(search: estree.Node): boolean {
+    let contains: boolean = false;
+
+    estraverse.traverse(search, {
+      enter: (node: estree.Node): void => {
+        if (node.type === 'AssignmentExpression' || node.type === 'UpdateExpression' || node.type === 'CallExpression') {
+          contains = true;
+        }
+      }
+    });
+
+    return contains;
   }
 }
 
