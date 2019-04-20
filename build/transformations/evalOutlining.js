@@ -19,11 +19,18 @@ var __importStar = (this && this.__importStar) || function (mod) {
     result["default"] = mod;
     return result;
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 require("colors");
 var estraverse = __importStar(require("estraverse"));
 var codeGeneration_1 = require("../codeGeneration");
 var configuration_1 = require("../configuration");
 var transformations_1 = require("../transformations");
+var expressionObfuscation_1 = __importDefault(require("./expressionObfuscation"));
+var literalObfuscation_1 = __importDefault(require("./literalObfuscation"));
+var numberObfuscation_1 = __importDefault(require("./numberObfuscation"));
+var unicodeLiteral_1 = __importDefault(require("./unicodeLiteral"));
 var EvalOutlining = /** @class */ (function (_super) {
     __extends(EvalOutlining, _super);
     function EvalOutlining() {
@@ -46,22 +53,49 @@ var EvalOutlining = /** @class */ (function (_super) {
                     }
                     if (Math.random() <= _this.settings.chance) {
                         count++;
-                        return {
-                            type: 'ExpressionStatement',
-                            expression: {
-                                type: 'CallExpression',
-                                callee: {
-                                    type: 'Identifier',
-                                    name: 'eval'
-                                },
-                                arguments: [
-                                    {
-                                        type: 'Literal',
-                                        value: codeGeneration_1.CodeGeneration.generate(node)
+                        var block = {
+                            type: 'BlockStatement',
+                            body: [
+                                {
+                                    type: 'ExpressionStatement',
+                                    expression: {
+                                        type: 'CallExpression',
+                                        callee: {
+                                            type: 'Identifier',
+                                            name: 'eval'
+                                        },
+                                        arguments: [
+                                            {
+                                                type: 'Literal',
+                                                value: codeGeneration_1.CodeGeneration.generate(node)
+                                            }
+                                        ]
                                     }
-                                ]
-                            }
+                                }
+                            ]
                         };
+                        var program = {
+                            type: 'Program',
+                            body: [block],
+                            sourceType: 'module'
+                        };
+                        var originalVerboseState = configuration_1.Verbose.isEnabled;
+                        configuration_1.Verbose.isEnabled = false;
+                        new literalObfuscation_1.default(program, {
+                            splitChance: 0.8,
+                            arrayChance: 0,
+                            base64Chance: 0.8
+                        }).apply();
+                        new unicodeLiteral_1.default(program).apply();
+                        new expressionObfuscation_1.default(program, {
+                            booleanChance: 0.8,
+                            undefinedChance: 0.8
+                        }).apply();
+                        new numberObfuscation_1.default(program, {
+                            chance: 0.5
+                        }).apply();
+                        configuration_1.Verbose.isEnabled = originalVerboseState;
+                        return program.body[0];
                     }
                 }
             }

@@ -4,6 +4,10 @@ import * as estree from 'estree';
 import { CodeGeneration } from '../codeGeneration';
 import { Verbose } from '../configuration';
 import { BaseTransformation } from '../transformations';
+import ExpressionObfuscation from './expressionObfuscation';
+import LiteralObfuscation from './literalObfuscation';
+import NumberObufscation from './numberObfuscation';
+import UnicodeLiteral from './unicodeLiteral';
 
 class EvalOutlining extends BaseTransformation {
   protected readonly forbiddenStatements: string[] = ['ReturnStatement', 'BreakStatement', 'ContinueStatement', 'VariableDeclaration', 'FunctionDeclaration'];
@@ -23,22 +27,58 @@ class EvalOutlining extends BaseTransformation {
           }
           if (Math.random() <= this.settings.chance) {
             count++;
-            return {
-              type: 'ExpressionStatement',
-              expression: {
-                type: 'CallExpression',
-                callee: {
-                  type: 'Identifier',
-                  name: 'eval'
-                },
-                arguments: [
-                  {
-                    type: 'Literal',
-                    value: CodeGeneration.generate(node)
+
+            const block: estree.BlockStatement = {
+              type: 'BlockStatement',
+              body: [
+                {
+                  type: 'ExpressionStatement',
+                  expression: {
+                    type: 'CallExpression',
+                    callee: {
+                      type: 'Identifier',
+                      name: 'eval'
+                    },
+                    arguments: [
+                      {
+                        type: 'Literal',
+                        value: CodeGeneration.generate(node)
+                      }
+                    ]
                   }
-                ]
-              }
+                }
+              ]
             };
+
+            const program: estree.Program = {
+              type: 'Program',
+              body: [block],
+              sourceType: 'module'
+            };
+
+            const originalVerboseState: boolean = Verbose.isEnabled;
+            Verbose.isEnabled = false;
+
+            new LiteralObfuscation(program, {
+              splitChance: 0.8,
+              arrayChance: 0,
+              base64Chance: 0.8
+            }).apply();
+
+            new UnicodeLiteral(program).apply();
+
+            new ExpressionObfuscation(program, {
+              booleanChance: 0.8,
+              undefinedChance: 0.8
+            }).apply();
+
+            new NumberObufscation(program, {
+              chance: 0.5
+            }).apply();
+
+            Verbose.isEnabled = originalVerboseState;
+
+            return program.body[0];
           }
         }
       }
