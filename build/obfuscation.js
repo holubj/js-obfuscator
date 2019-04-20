@@ -18,6 +18,7 @@ var configuration_1 = require("./configuration");
 var identifiers_1 = require("./identifiers");
 var insertPosition_1 = require("./insertPosition");
 var transformations_1 = require("./transformations");
+var identifierRenaming_1 = __importDefault(require("./transformations/identifierRenaming"));
 Error.stackTraceLimit = Infinity;
 if (process.argv.length < 3) {
     console.log('Usage: node ' + process.argv[1] + ' FILENAME');
@@ -35,9 +36,15 @@ catch (err) {
 var p = espree_1.default.parse(code);
 // p = esmangle.optimize(p, null);
 // p = esmangle.mangle(p);
+// console.log(esvalid.isValid(p));
 if (transformations_1.isSuitable(p)) {
     identifiers_1.Identifiers.init(p);
     insertPosition_1.InsertPosition.init(p);
+    if (configuration_1.configuration.identifierRenaming) {
+        p = new identifierRenaming_1.default(p, {
+            renameGlobals: configuration_1.configuration.renameGlobals
+        }).apply();
+    }
     for (var _i = 0, _a = configuration_1.configuration.stream; _i < _a.length; _i++) {
         var item = _a[_i];
         if (item.enabled) {

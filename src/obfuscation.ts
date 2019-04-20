@@ -9,6 +9,7 @@ import { configuration, Verbose } from './configuration';
 import { Identifiers } from './identifiers';
 import { InsertPosition } from './insertPosition';
 import { BaseTransformation, isSuitable } from './transformations';
+import IdentifierRenaming from './transformations/identifierRenaming';
 
 Error.stackTraceLimit = Infinity;
 
@@ -31,9 +32,17 @@ let p: estree.Program = espree.parse(code);
 // p = esmangle.optimize(p, null);
 // p = esmangle.mangle(p);
 
+// console.log(esvalid.isValid(p));
+
 if (isSuitable(p)) {
   Identifiers.init(p);
   InsertPosition.init(p);
+
+  if (configuration.identifierRenaming) {
+    p = new IdentifierRenaming(p, {
+      renameGlobals: configuration.renameGlobals
+    }).apply();
+  }
 
   for (const item of configuration.stream) {
     if (item.enabled) {

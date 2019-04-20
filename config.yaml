@@ -1,4 +1,6 @@
 verbose: true
+identifierRenaming: true
+renameGlobals: true
 stream:
   - name: Computed Member # transforms object.property to object['property']
     file: ./transformations/computedMember.js
@@ -18,17 +20,6 @@ stream:
   - name: Console Redefinition
     file: ./transformations/consoleRedefinition.js
     enabled: false
-  - name: Expression Obfuscation
-    file: ./transformations/expressionObfuscation.js
-    enabled: true
-    settings:
-      booleanChance: 0.8 # 80% of booleans obfuscated
-      undefinedChance: 0.8 # 80% of 'undefined' expression obfuscated
-  - name: Number Obfuscation
-    file: ./transformations/numberObfuscation.js
-    enabled: true
-    settings:
-      chance: 0.5 # 50% of numbers obfuscated
   - name: Literal Obfuscation
     file: ./transformations/literalObfuscation.js
     enabled: true
