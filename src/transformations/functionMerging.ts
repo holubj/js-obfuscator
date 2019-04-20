@@ -26,9 +26,8 @@ class FunctionMerging extends BaseTransformation {
                 );
 
                 node.body[i] = mergedDeclaration;
-                this.ast.body.splice(firstDeclarationIndex, 1);
+                node.body.splice(firstDeclarationIndex, 1);
                 i--;
-
                 firstDeclarationIndex = this.UNDEFINED;
               }
             }
@@ -40,6 +39,21 @@ class FunctionMerging extends BaseTransformation {
     });
 
     return this.ast;
+  }
+
+  /**
+   * @protected
+   * @param {estree.Node} node
+   * @param {(estree.Node | null)} parent
+   * @returns {boolean}
+   * @memberof FunctionMerging
+   */
+  protected isProperty(node: estree.Node, parent: estree.Node | null): boolean {
+    if (parent === null) {
+      return false;
+    } else {
+      return parent.type === 'Property' && parent.key === node;
+    }
   }
 
   /**
@@ -69,13 +83,13 @@ class FunctionMerging extends BaseTransformation {
     firstDeclaration = this.mapNewParams(firstDeclaration, unifiedParams);
     secondDeclaration = this.mapNewParams(secondDeclaration, unifiedParams);
 
-    const firstLiteral: estree.Literal = this.extractLiteral(firstDeclaration, 0, decidingVariable);
+    const firstLiteral: estree.Literal = this.extractLiteral(firstDeclaration, 0, decidingVariable, null);
 
     let defaultSecondLiteral: number = 1;
     if (firstLiteral.value === 1) {
       defaultSecondLiteral = 0;
     }
-    const secondLiteral: estree.Literal = this.extractLiteral(secondDeclaration, defaultSecondLiteral, decidingVariable);
+    const secondLiteral: estree.Literal = this.extractLiteral(secondDeclaration, defaultSecondLiteral, decidingVariable, firstLiteral);
 
     this.updateFuncCalls(firstDeclaration, ident, firstLiteral);
     this.updateFuncCalls(secondDeclaration, ident, secondLiteral);
@@ -143,15 +157,20 @@ class FunctionMerging extends BaseTransformation {
    * @returns {estree.Literal}
    * @memberof FunctionMerging
    */
-  protected extractLiteral(decl: estree.FunctionDeclaration, defaultValue: number, decidingVariable: estree.Identifier): estree.Literal {
+  protected extractLiteral(
+    decl: estree.FunctionDeclaration,
+    defaultValue: number,
+    decidingVariable: estree.Identifier,
+    forbiddenLiteral: estree.Literal | null
+  ): estree.Literal {
     let literal: estree.Literal = {
       type: 'Literal',
       value: defaultValue
     };
     let extracted: boolean = false;
     estraverse.replace(decl, {
-      enter: (node: estree.Node): estree.Node | void => {
-        if (node.type === 'Literal' && !extracted) {
+      enter: (node: estree.Node, parent: estree.Node | null): estree.Node | void => {
+        if (!extracted && node.type === 'Literal' && !this.isProperty(node, parent) && (forbiddenLiteral === null || node.value !== forbiddenLiteral.value)) {
           literal = node;
           extracted = true;
           return decidingVariable;
@@ -214,6 +233,10 @@ class FunctionMerging extends BaseTransformation {
    * @memberof FunctionMerging
    */
   protected isSuitable(funcDeclaration: estree.FunctionDeclaration): boolean {
+    if (funcDeclaration.id === null) {
+      return false;
+    }
+
     let suitable: boolean = true;
     estraverse.traverse(funcDeclaration, {
       enter: (node: estree.Node): void => {

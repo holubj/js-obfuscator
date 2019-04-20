@@ -49,6 +49,21 @@ var LiteralObfuscation = /** @class */ (function (_super) {
     };
     /**
      * @protected
+     * @param {estree.Node} node
+     * @param {(estree.Node | null)} parent
+     * @returns {boolean}
+     * @memberof LiteralObfuscation
+     */
+    LiteralObfuscation.prototype.isProperty = function (node, parent) {
+        if (parent === null) {
+            return false;
+        }
+        else {
+            return parent.type === 'Property' && parent.key === node;
+        }
+    };
+    /**
+     * @protected
      * @returns {void}
      * @memberof LiteralObfuscation
      */
@@ -56,8 +71,8 @@ var LiteralObfuscation = /** @class */ (function (_super) {
         var _this = this;
         var count = 0;
         estraverse.replace(this.ast, {
-            leave: function (node) {
-                if (node.type === 'Literal' && typeof node.value === 'string' && node.value !== 'use strict') {
+            leave: function (node, parent) {
+                if (node.type === 'Literal' && typeof node.value === 'string' && node.value !== 'use strict' && !_this.isProperty(node, parent)) {
                     if (Math.random() <= _this.settings.splitChance) {
                         if (node.value.length >= 2) {
                             count++;
@@ -88,8 +103,8 @@ var LiteralObfuscation = /** @class */ (function (_super) {
     LiteralObfuscation.prototype.fetchLiterals = function () {
         var _this = this;
         estraverse.replace(this.ast, {
-            enter: function (node) {
-                if (node.type === 'Literal' && typeof node.value === 'string' && node.value !== 'use strict') {
+            enter: function (node, parent) {
+                if (node.type === 'Literal' && typeof node.value === 'string' && node.value !== 'use strict' && !_this.isProperty(node, parent)) {
                     if (Math.random() <= _this.settings.arrayChance) {
                         if (!_this.literals.find(function (literal) { return literal === node.value; })) {
                             _this.literals.push(node.value);
@@ -114,8 +129,8 @@ var LiteralObfuscation = /** @class */ (function (_super) {
         var literalArrayIdentifier = identifiers_1.Identifiers.generate();
         var accessFuncIdentifier = identifiers_1.Identifiers.generate();
         estraverse.replace(this.ast, {
-            enter: function (node) {
-                if (node.type === 'Literal' && typeof node.value === 'string' && node.value !== 'use strict') {
+            enter: function (node, parent) {
+                if (node.type === 'Literal' && typeof node.value === 'string' && node.value !== 'use strict' && !_this.isProperty(node, parent)) {
                     // some literals might be omitted based on chance settings
                     if (_this.literals.includes(node.value)) {
                         count++;
@@ -133,8 +148,8 @@ var LiteralObfuscation = /** @class */ (function (_super) {
         var _this = this;
         var count = 0;
         estraverse.replace(this.ast, {
-            leave: function (node) {
-                if (node.type === 'Literal' && typeof node.value === 'string' && node.value !== 'use strict') {
+            leave: function (node, parent) {
+                if (node.type === 'Literal' && typeof node.value === 'string' && node.value !== 'use strict' && !_this.isProperty(node, parent)) {
                     if (Math.random() <= _this.settings.base64Chance && !/[^A-Za-z0-9 ]/.test(node.value)) {
                         count++;
                         return {

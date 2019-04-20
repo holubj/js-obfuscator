@@ -47,7 +47,7 @@ var FunctionMerging = /** @class */ (function (_super) {
                             else {
                                 var mergedDeclaration = _this.mergeDeclarations(node.body[firstDeclarationIndex], node.body[i]);
                                 node.body[i] = mergedDeclaration;
-                                _this.ast.body.splice(firstDeclarationIndex, 1);
+                                node.body.splice(firstDeclarationIndex, 1);
                                 i--;
                                 firstDeclarationIndex = _this.UNDEFINED;
                             }
@@ -58,6 +58,21 @@ var FunctionMerging = /** @class */ (function (_super) {
             }
         });
         return this.ast;
+    };
+    /**
+     * @protected
+     * @param {estree.Node} node
+     * @param {(estree.Node | null)} parent
+     * @returns {boolean}
+     * @memberof FunctionMerging
+     */
+    FunctionMerging.prototype.isProperty = function (node, parent) {
+        if (parent === null) {
+            return false;
+        }
+        else {
+            return parent.type === 'Property' && parent.key === node;
+        }
     };
     /**
      * @protected
@@ -83,12 +98,12 @@ var FunctionMerging = /** @class */ (function (_super) {
         }
         firstDeclaration = this.mapNewParams(firstDeclaration, unifiedParams);
         secondDeclaration = this.mapNewParams(secondDeclaration, unifiedParams);
-        var firstLiteral = this.extractLiteral(firstDeclaration, 0, decidingVariable);
+        var firstLiteral = this.extractLiteral(firstDeclaration, 0, decidingVariable, null);
         var defaultSecondLiteral = 1;
         if (firstLiteral.value === 1) {
             defaultSecondLiteral = 0;
         }
-        var secondLiteral = this.extractLiteral(secondDeclaration, defaultSecondLiteral, decidingVariable);
+        var secondLiteral = this.extractLiteral(secondDeclaration, defaultSecondLiteral, decidingVariable, firstLiteral);
         this.updateFuncCalls(firstDeclaration, ident, firstLiteral);
         this.updateFuncCalls(secondDeclaration, ident, secondLiteral);
         // update also possible recursive calls
@@ -153,15 +168,16 @@ var FunctionMerging = /** @class */ (function (_super) {
      * @returns {estree.Literal}
      * @memberof FunctionMerging
      */
-    FunctionMerging.prototype.extractLiteral = function (decl, defaultValue, decidingVariable) {
+    FunctionMerging.prototype.extractLiteral = function (decl, defaultValue, decidingVariable, forbiddenLiteral) {
+        var _this = this;
         var literal = {
             type: 'Literal',
             value: defaultValue
         };
         var extracted = false;
         estraverse.replace(decl, {
-            enter: function (node) {
-                if (node.type === 'Literal' && !extracted) {
+            enter: function (node, parent) {
+                if (!extracted && node.type === 'Literal' && !_this.isProperty(node, parent) && (forbiddenLiteral === null || node.value !== forbiddenLiteral.value)) {
                     literal = node;
                     extracted = true;
                     return decidingVariable;
@@ -214,6 +230,9 @@ var FunctionMerging = /** @class */ (function (_super) {
      * @memberof FunctionMerging
      */
     FunctionMerging.prototype.isSuitable = function (funcDeclaration) {
+        if (funcDeclaration.id === null) {
+            return false;
+        }
         var suitable = true;
         estraverse.traverse(funcDeclaration, {
             enter: function (node) {
