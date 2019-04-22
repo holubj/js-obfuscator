@@ -35,8 +35,8 @@ class NumberObfuscation extends BaseTransformation {
   public apply(): estree.Program {
     let count: number = 0;
     estraverse.replace(this.ast, {
-      enter: (node: estree.Node): estree.Node | void => {
-        if (node.type === 'Literal' && typeof node.value === 'number' && Number.isInteger(node.value)) {
+      enter: (node: estree.Node, parent: estree.Node | null): estree.Node | void => {
+        if (node.type === 'Literal' && typeof node.value === 'number' && Number.isInteger(node.value) && !this.isProperty(node, parent)) {
           if (node.value >= 0 && node.value < 10) {
             if (Math.random() <= this.settings.chance) {
               count++;
@@ -88,6 +88,21 @@ class NumberObfuscation extends BaseTransformation {
       return this.one;
     } else {
       return this.zero;
+    }
+  }
+
+  /**
+   * @protected
+   * @param {estree.Node} node
+   * @param {(estree.Node | null)} parent
+   * @returns {boolean}
+   * @memberof NumberObfuscation
+   */
+  protected isProperty(node: estree.Node, parent: estree.Node | null): boolean {
+    if (parent === null) {
+      return false;
+    } else {
+      return parent.type === 'Property' && parent.key === node;
     }
   }
 }
