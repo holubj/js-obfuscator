@@ -49,15 +49,9 @@ var OperatorOutlining = /** @class */ (function (_super) {
      * @memberof OperatorOutlining
      */
     OperatorOutlining.prototype.apply = function () {
-        if (this.settings.unaryOperators) {
-            this.outlineUnaryOperators();
-        }
-        if (this.settings.assignmentOperators) {
-            this.replaceAssignmentOperators();
-        }
-        if (this.settings.binaryOperators) {
-            this.outlineBinaryOperators();
-        }
+        this.outlineUnaryOperators();
+        this.replaceAssignmentOperators();
+        this.outlineBinaryOperators();
         return this.ast;
     };
     /**
@@ -104,14 +98,16 @@ var OperatorOutlining = /** @class */ (function (_super) {
         estraverse.replace(this.ast, {
             enter: function (node) {
                 if (node.type === 'UnaryExpression' && !_this.forbiddenUnaryOperators.includes(node.operator)) {
-                    return {
-                        type: 'CallExpression',
-                        callee: {
-                            type: 'Identifier',
-                            name: _this.getOperatorFuncIdentifier(node)
-                        },
-                        arguments: [node.argument]
-                    };
+                    if (Math.random() <= _this.settings.unaryOperatorChance) {
+                        return {
+                            type: 'CallExpression',
+                            callee: {
+                                type: 'Identifier',
+                                name: _this.getOperatorFuncIdentifier(node)
+                            },
+                            arguments: [node.argument]
+                        };
+                    }
                 }
             }
         });
@@ -151,21 +147,24 @@ var OperatorOutlining = /** @class */ (function (_super) {
      * @memberof OperatorOutlining
      */
     OperatorOutlining.prototype.replaceAssignmentOperators = function () {
+        var _this = this;
         estraverse.replace(this.ast, {
             enter: function (node) {
                 if (node.type === 'AssignmentExpression') {
                     if (node.operator !== '=' && node.left.type === 'Identifier') {
-                        return {
-                            type: 'AssignmentExpression',
-                            operator: '=',
-                            left: node.left,
-                            right: {
-                                type: 'BinaryExpression',
-                                operator: '+',
+                        if (Math.random() <= _this.settings.assignmentOperatorChance) {
+                            return {
+                                type: 'AssignmentExpression',
+                                operator: '=',
                                 left: node.left,
-                                right: node.right
-                            }
-                        };
+                                right: {
+                                    type: 'BinaryExpression',
+                                    operator: '+',
+                                    left: node.left,
+                                    right: node.right
+                                }
+                            };
+                        }
                     }
                 }
             }
@@ -180,14 +179,16 @@ var OperatorOutlining = /** @class */ (function (_super) {
         estraverse.replace(this.ast, {
             enter: function (node) {
                 if (node.type === 'BinaryExpression') {
-                    return {
-                        type: 'CallExpression',
-                        callee: {
-                            type: 'Identifier',
-                            name: _this.getOperatorFuncIdentifier(node)
-                        },
-                        arguments: [node.left, node.right]
-                    };
+                    if (Math.random() <= _this.settings.binaryOperatorChance) {
+                        return {
+                            type: 'CallExpression',
+                            callee: {
+                                type: 'Identifier',
+                                name: _this.getOperatorFuncIdentifier(node)
+                            },
+                            arguments: [node.left, node.right]
+                        };
+                    }
                 }
             }
         });

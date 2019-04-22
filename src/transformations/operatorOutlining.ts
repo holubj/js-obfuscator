@@ -26,15 +26,9 @@ class OperatorOutlining extends BaseTransformation {
    * @memberof OperatorOutlining
    */
   public apply(): estree.Program {
-    if (this.settings.unaryOperators) {
-      this.outlineUnaryOperators();
-    }
-    if (this.settings.assignmentOperators) {
-      this.replaceAssignmentOperators();
-    }
-    if (this.settings.binaryOperators) {
-      this.outlineBinaryOperators();
-    }
+    this.outlineUnaryOperators();
+    this.replaceAssignmentOperators();
+    this.outlineBinaryOperators();
 
     return this.ast;
   }
@@ -85,14 +79,16 @@ class OperatorOutlining extends BaseTransformation {
     estraverse.replace(this.ast, {
       enter: (node: estree.Node): estree.Node | void => {
         if (node.type === 'UnaryExpression' && !this.forbiddenUnaryOperators.includes(node.operator)) {
-          return {
-            type: 'CallExpression',
-            callee: {
-              type: 'Identifier',
-              name: this.getOperatorFuncIdentifier(node)
-            },
-            arguments: [node.argument]
-          };
+          if (Math.random() <= this.settings.unaryOperatorChance) {
+            return {
+              type: 'CallExpression',
+              callee: {
+                type: 'Identifier',
+                name: this.getOperatorFuncIdentifier(node)
+              },
+              arguments: [node.argument]
+            };
+          }
         }
       }
     });
@@ -140,17 +136,19 @@ class OperatorOutlining extends BaseTransformation {
       enter: (node: estree.Node): estree.Node | void => {
         if (node.type === 'AssignmentExpression') {
           if (node.operator !== '=' && node.left.type === 'Identifier') {
-            return {
-              type: 'AssignmentExpression',
-              operator: '=',
-              left: node.left,
-              right: {
-                type: 'BinaryExpression',
-                operator: '+',
+            if (Math.random() <= this.settings.assignmentOperatorChance) {
+              return {
+                type: 'AssignmentExpression',
+                operator: '=',
                 left: node.left,
-                right: node.right
-              }
-            };
+                right: {
+                  type: 'BinaryExpression',
+                  operator: '+',
+                  left: node.left,
+                  right: node.right
+                }
+              };
+            }
           }
         }
       }
@@ -165,14 +163,16 @@ class OperatorOutlining extends BaseTransformation {
     estraverse.replace(this.ast, {
       enter: (node: estree.Node): estree.Node | void => {
         if (node.type === 'BinaryExpression') {
-          return {
-            type: 'CallExpression',
-            callee: {
-              type: 'Identifier',
-              name: this.getOperatorFuncIdentifier(node)
-            },
-            arguments: [node.left, node.right]
-          };
+          if (Math.random() <= this.settings.binaryOperatorChance) {
+            return {
+              type: 'CallExpression',
+              callee: {
+                type: 'Identifier',
+                name: this.getOperatorFuncIdentifier(node)
+              },
+              arguments: [node.left, node.right]
+            };
+          }
         }
       }
     });
