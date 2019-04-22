@@ -2,6 +2,9 @@ verbose: true
 identifierRenaming: true
 renameGlobals: true
 stream:
+  - name: Debugger Breakpoint Loop
+    file: ./transformations/debuggerBreakpointLoop.js
+    enabled: true
   - name: Computed Member # transforms object.property to object['property']
     file: ./transformations/computedMember.js
     enabled: true

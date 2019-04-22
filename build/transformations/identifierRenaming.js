@@ -27,9 +27,7 @@ var transformations_1 = require("../transformations");
 var IdentifierRenaming = /** @class */ (function (_super) {
     __extends(IdentifierRenaming, _super);
     function IdentifierRenaming() {
-        var _this = _super !== null && _super.apply(this, arguments) || this;
-        _this.declaredIdentifiers = new Set();
-        return _this;
+        return _super !== null && _super.apply(this, arguments) || this;
     }
     /**
      * @returns {estree.Program}
