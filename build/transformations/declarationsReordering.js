@@ -99,9 +99,12 @@ var DeclarationsReordering = /** @class */ (function (_super) {
     DeclarationsReordering.prototype.removeDeclarations = function (scope) {
         var declarations = [];
         estraverse.replace(scope, {
-            enter: function (node) {
+            enter: function (node, parent) {
                 if (/Function/.test(node.type) && node !== scope) {
                     return estraverse.VisitorOption.Skip;
+                }
+                if (parent && ((parent.type === 'ForInStatement' && parent.left === node) || (parent.type === 'ForStatement' && parent.init === node))) {
+                    return;
                 }
                 if (node.type === 'VariableDeclaration') {
                     declarations.push(node);

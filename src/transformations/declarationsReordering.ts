@@ -82,9 +82,13 @@ class DeclarationsReordering extends BaseTransformation {
   protected removeDeclarations(scope: estree.Node): estree.VariableDeclaration[] {
     const declarations: estree.VariableDeclaration[] = [];
     estraverse.replace(scope, {
-      enter: (node: estree.Node): estree.Node | estraverse.VisitorOption | void => {
+      enter: (node: estree.Node, parent: estree.Node | null): estree.Node | estraverse.VisitorOption | void => {
         if (/Function/.test(node.type) && node !== scope) {
           return estraverse.VisitorOption.Skip;
+        }
+
+        if (parent && ((parent.type === 'ForInStatement' && parent.left === node) || (parent.type === 'ForStatement' && parent.init === node))) {
+          return;
         }
 
         if (node.type === 'VariableDeclaration') {
