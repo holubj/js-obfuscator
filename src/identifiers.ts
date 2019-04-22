@@ -26,10 +26,7 @@ export class Identifiers {
   public static generate(): string {
     let identifier: string;
     do {
-      identifier = randomstring.generate({
-        length: 12,
-        charset: 'alphabetic'
-      });
+      identifier = '_0x' + randomstring.generate({ length: 10, charset: 'hex' });
     } while (this.usedIdentifiers.has(identifier));
 
     this.usedIdentifiers.add(identifier);
