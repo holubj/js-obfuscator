@@ -5,6 +5,11 @@ stream:
   - name: Debugger Breakpoint Loop
     file: ./transformations/debuggerBreakpointLoop.js
     enabled: true
+  - name: Declarations Reordering
+    file: ./transformations/declarationsReordering.js
+    enabled: true
+    settings:
+      deeperBlockChance: 0.33 # 33% chance to move declaration deeper one block in the current scope
   - name: Computed Member # transforms object.property to object['property']
     file: ./transformations/computedMember.js
     enabled: true
