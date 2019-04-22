@@ -35,7 +35,15 @@ var EvalOutlining = /** @class */ (function (_super) {
     __extends(EvalOutlining, _super);
     function EvalOutlining() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
-        _this.forbiddenStatements = ['ReturnStatement', 'BreakStatement', 'ContinueStatement', 'VariableDeclaration', 'FunctionDeclaration'];
+        _this.forbiddenStatements = [
+            'ReturnStatement',
+            'BreakStatement',
+            'ContinueStatement',
+            'VariableDeclaration',
+            'FunctionDeclaration',
+            'FunctionExpression',
+            'ArrowFunctionExpression'
+        ];
         return _this;
     }
     /**

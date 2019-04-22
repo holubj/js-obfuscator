@@ -10,7 +10,15 @@ import NumberObufscation from './numberObfuscation';
 import UnicodeLiteral from './unicodeLiteral';
 
 class EvalOutlining extends BaseTransformation {
-  protected readonly forbiddenStatements: string[] = ['ReturnStatement', 'BreakStatement', 'ContinueStatement', 'VariableDeclaration', 'FunctionDeclaration'];
+  protected readonly forbiddenStatements: string[] = [
+    'ReturnStatement',
+    'BreakStatement',
+    'ContinueStatement',
+    'VariableDeclaration',
+    'FunctionDeclaration',
+    'FunctionExpression',
+    'ArrowFunctionExpression'
+  ];
 
   /**
    * @returns {estree.Program}
