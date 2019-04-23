@@ -12,7 +12,15 @@ import NumberObufscation from './numberObfuscation';
 import UnicodeLiteral from './unicodeLiteral';
 
 class CodeEncryption extends BaseTransformation {
-  protected readonly forbiddenStatements: string[] = ['ReturnStatement', 'BreakStatement', 'ContinueStatement', 'VariableDeclaration', 'FunctionDeclaration'];
+  protected readonly forbiddenStatements: string[] = [
+    'ReturnStatement',
+    'BreakStatement',
+    'ContinueStatement',
+    'VariableDeclaration',
+    'FunctionDeclaration',
+    'FunctionExpression',
+    'ArrowFunctionExpression'
+  ];
 
   protected sealedTopLevelFunctions: string[] = [];
 

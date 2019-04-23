@@ -37,7 +37,15 @@ var CodeEncryption = /** @class */ (function (_super) {
     __extends(CodeEncryption, _super);
     function CodeEncryption() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
-        _this.forbiddenStatements = ['ReturnStatement', 'BreakStatement', 'ContinueStatement', 'VariableDeclaration', 'FunctionDeclaration'];
+        _this.forbiddenStatements = [
+            'ReturnStatement',
+            'BreakStatement',
+            'ContinueStatement',
+            'VariableDeclaration',
+            'FunctionDeclaration',
+            'FunctionExpression',
+            'ArrowFunctionExpression'
+        ];
         _this.sealedTopLevelFunctions = [];
         return _this;
     }
