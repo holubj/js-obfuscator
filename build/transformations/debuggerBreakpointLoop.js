@@ -15,6 +15,7 @@ var __extends = (this && this.__extends) || (function () {
 var identifiers_1 = require("../identifiers");
 var insertPosition_1 = require("../insertPosition");
 var transformations_1 = require("../transformations");
+var estemplate = require('estemplate');
 var DebuggerBreakpointLoop = /** @class */ (function (_super) {
     __extends(DebuggerBreakpointLoop, _super);
     function DebuggerBreakpointLoop() {
@@ -26,55 +27,14 @@ var DebuggerBreakpointLoop = /** @class */ (function (_super) {
      */
     DebuggerBreakpointLoop.prototype.apply = function () {
         var funcDeclIdent = identifiers_1.Identifiers.generate();
-        var loopFuncDecl = {
-            type: 'FunctionDeclaration',
-            id: {
-                type: 'Identifier',
-                name: funcDeclIdent
-            },
-            params: [],
-            body: {
-                type: 'BlockStatement',
-                body: [
-                    {
-                        type: 'ExpressionStatement',
-                        expression: {
-                            type: 'CallExpression',
-                            callee: {
-                                type: 'Identifier',
-                                name: 'eval'
-                            },
-                            arguments: [
-                                {
-                                    type: 'Literal',
-                                    value: 'debugger'
-                                }
-                            ]
-                        }
-                    }
-                ]
-            }
-        };
-        var loopExpr = {
-            type: 'ExpressionStatement',
-            expression: {
-                type: 'CallExpression',
-                callee: {
-                    type: 'Identifier',
-                    name: 'setInterval'
-                },
-                arguments: [
-                    {
-                        type: 'Identifier',
-                        name: funcDeclIdent
-                    },
-                    {
-                        type: 'Literal',
-                        value: 500
-                    }
-                ]
-            }
-        };
+        var funcTemplate = 'function <%= funcIdent %>(){eval("debugger");}';
+        var loopFuncDecl = estemplate(funcTemplate, {
+            funcIdent: { type: 'Identifier', name: funcDeclIdent }
+        }).body[0];
+        var loopTemplate = 'setInterval(<%= funcIdent %>, 500);';
+        var loopExpr = estemplate(loopTemplate, {
+            funcIdent: { type: 'Identifier', name: funcDeclIdent }
+        }).body[0];
         this.ast.body.splice(insertPosition_1.InsertPosition.get(), 0, loopFuncDecl);
         this.ast.body.splice(insertPosition_1.InsertPosition.get(), 0, loopExpr);
         return this.ast;

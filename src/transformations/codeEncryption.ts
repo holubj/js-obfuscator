@@ -10,6 +10,7 @@ import ExpressionObfuscation from './expressionObfuscation';
 import LiteralObfuscation from './literalObfuscation';
 import NumberObufscation from './numberObfuscation';
 import UnicodeLiteral from './unicodeLiteral';
+const estemplate = require('estemplate');
 
 class CodeEncryption extends BaseTransformation {
   protected readonly forbiddenStatements: string[] = [
@@ -161,137 +162,16 @@ class CodeEncryption extends BaseTransformation {
    * @memberof CodeEncryption
    */
   protected generateClientKeyDecl(keyIdent: string, keyFuncDecl: estree.FunctionDeclaration): estree.VariableDeclaration {
-    const resultIdent: string = Identifiers.generate();
-    const numIdent: string = Identifiers.generate();
-    const indexIdent: string = Identifiers.generate();
+    const template: string =
+      "var <%= varIdent %> = <%= funcDecl %>['toString']()['split']('')['reduce'](function(<%= resultIdent %>, <%= numIdent %>, <%= indexIdent %>) {return <%= resultIdent %> ^ <%= numIdent %>['charCodeAt'](0) + <%= indexIdent %>}, 0);";
 
-    return {
-      type: 'VariableDeclaration',
-      declarations: [
-        {
-          type: 'VariableDeclarator',
-          id: {
-            type: 'Identifier',
-            name: keyIdent
-          },
-          init: {
-            type: 'CallExpression',
-            callee: {
-              type: 'MemberExpression',
-              object: {
-                type: 'CallExpression',
-                callee: {
-                  type: 'MemberExpression',
-                  object: {
-                    type: 'CallExpression',
-                    callee: {
-                      type: 'MemberExpression',
-                      object: {
-                        type: 'Identifier',
-                        name: keyFuncDecl.id ? keyFuncDecl.id.name : ''
-                      },
-                      property: {
-                        type: 'Literal',
-                        value: 'toString'
-                      },
-                      computed: true
-                    },
-                    arguments: []
-                  },
-                  property: {
-                    type: 'Literal',
-                    value: 'split'
-                  },
-                  computed: true
-                },
-                arguments: [
-                  {
-                    type: 'Literal',
-                    value: ''
-                  }
-                ]
-              },
-              property: {
-                type: 'Literal',
-                value: 'reduce'
-              },
-              computed: true
-            },
-            arguments: [
-              {
-                type: 'FunctionExpression',
-                id: null,
-                generator: false,
-                params: [
-                  {
-                    type: 'Identifier',
-                    name: resultIdent
-                  },
-                  {
-                    type: 'Identifier',
-                    name: numIdent
-                  },
-                  {
-                    type: 'Identifier',
-                    name: indexIdent
-                  }
-                ],
-                body: {
-                  type: 'BlockStatement',
-                  body: [
-                    {
-                      type: 'ReturnStatement',
-                      argument: {
-                        type: 'BinaryExpression',
-                        left: {
-                          type: 'Identifier',
-                          name: resultIdent
-                        },
-                        operator: '^',
-                        right: {
-                          type: 'BinaryExpression',
-                          operator: '+',
-                          left: {
-                            type: 'CallExpression',
-                            callee: {
-                              type: 'MemberExpression',
-                              object: {
-                                type: 'Identifier',
-                                name: numIdent
-                              },
-                              property: {
-                                type: 'Literal',
-                                value: 'charCodeAt'
-                              },
-                              computed: true
-                            },
-                            arguments: [
-                              {
-                                type: 'Literal',
-                                value: 0
-                              }
-                            ]
-                          },
-                          right: {
-                            type: 'Identifier',
-                            name: indexIdent
-                          }
-                        }
-                      }
-                    }
-                  ]
-                }
-              },
-              {
-                type: 'Literal',
-                value: 0
-              }
-            ]
-          }
-        }
-      ],
-      kind: 'var'
-    };
+    return estemplate(template, {
+      varIdent: { type: 'Identifier', name: keyIdent },
+      funcDecl: keyFuncDecl.id,
+      resultIdent: { type: 'Identifier', name: Identifiers.generate() },
+      numIdent: { type: 'Identifier', name: Identifiers.generate() },
+      indexIdent: { type: 'Identifier', name: Identifiers.generate() }
+    }).body[0] as estree.VariableDeclaration;
   }
 
   /**
@@ -308,6 +188,7 @@ class CodeEncryption extends BaseTransformation {
       .reduce((result: number, code: string, index: number) => {
         return result ^ (code.charCodeAt(0) + index);
       }, 0);
+
     const block: string = CodeGeneration.generate(blockNode);
     const encrypted: estree.Literal[] = [];
     block.split('').map((value: string) => {
@@ -317,92 +198,12 @@ class CodeEncryption extends BaseTransformation {
       });
     });
 
-    const encryptedArrayExpression: estree.ArrayExpression = {
-      type: 'ArrayExpression',
-      elements: encrypted
-    };
-
-    const valueIdent: string = Identifiers.generate();
-
-    return {
-      type: 'CallExpression',
-      callee: {
-        type: 'MemberExpression',
-        object: {
-          type: 'CallExpression',
-          callee: {
-            type: 'MemberExpression',
-            object: encryptedArrayExpression,
-            property: {
-              type: 'Literal',
-              value: 'map'
-            },
-            computed: true
-          },
-          arguments: [
-            {
-              type: 'FunctionExpression',
-              id: null,
-              generator: false,
-              params: [
-                {
-                  type: 'Identifier',
-                  name: valueIdent
-                }
-              ],
-              body: {
-                type: 'BlockStatement',
-                body: [
-                  {
-                    type: 'ReturnStatement',
-                    argument: {
-                      type: 'CallExpression',
-                      callee: {
-                        type: 'MemberExpression',
-                        object: {
-                          type: 'Identifier',
-                          name: 'String'
-                        },
-                        property: {
-                          type: 'Literal',
-                          value: 'fromCharCode'
-                        },
-                        computed: true
-                      },
-                      arguments: [
-                        {
-                          type: 'BinaryExpression',
-                          left: {
-                            type: 'Identifier',
-                            name: valueIdent
-                          },
-                          operator: '^',
-                          right: {
-                            type: 'Identifier',
-                            name: keyIdent
-                          }
-                        }
-                      ]
-                    }
-                  }
-                ]
-              }
-            }
-          ]
-        },
-        property: {
-          type: 'Literal',
-          value: 'join'
-        },
-        computed: true
-      },
-      arguments: [
-        {
-          type: 'Literal',
-          value: ''
-        }
-      ]
-    };
+    const template: string = "[%= elements %]['map'](function(<%= valueIdent %>) {return String['fromCharCode'](<%= valueIdent %> ^ <%= key %>)})['join']('')";
+    return estemplate(template, {
+      elements: encrypted,
+      valueIdent: { type: 'Identifier', name: Identifiers.generate() },
+      key: { type: 'Identifier', name: keyIdent }
+    }).body[0].expression as estree.CallExpression;
   }
 
   /**
@@ -412,36 +213,11 @@ class CodeEncryption extends BaseTransformation {
    * @memberof CodeEncryption
    */
   protected generateTryCatchExpression(blockCodeDecryptExpr: estree.CallExpression): estree.TryStatement {
-    return {
-      type: 'TryStatement',
-      block: {
-        type: 'BlockStatement',
-        body: [
-          {
-            type: 'ExpressionStatement',
-            expression: {
-              type: 'CallExpression',
-              callee: {
-                type: 'Identifier',
-                name: 'eval'
-              },
-              arguments: [blockCodeDecryptExpr]
-            }
-          }
-        ]
-      },
-      handler: {
-        type: 'CatchClause',
-        param: {
-          type: 'Identifier',
-          name: 'e'
-        },
-        body: {
-          type: 'BlockStatement',
-          body: []
-        }
-      }
-    };
+    const template: string = 'try {eval(<%= block %>)} catch (e){}';
+
+    return estemplate(template, {
+      block: blockCodeDecryptExpr
+    }).body[0] as estree.TryStatement;
   }
 }
 

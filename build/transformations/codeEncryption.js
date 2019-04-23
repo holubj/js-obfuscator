@@ -33,6 +33,7 @@ var expressionObfuscation_1 = __importDefault(require("./expressionObfuscation")
 var literalObfuscation_1 = __importDefault(require("./literalObfuscation"));
 var numberObfuscation_1 = __importDefault(require("./numberObfuscation"));
 var unicodeLiteral_1 = __importDefault(require("./unicodeLiteral"));
+var estemplate = require('estemplate');
 var CodeEncryption = /** @class */ (function (_super) {
     __extends(CodeEncryption, _super);
     function CodeEncryption() {
@@ -165,136 +166,14 @@ var CodeEncryption = /** @class */ (function (_super) {
      * @memberof CodeEncryption
      */
     CodeEncryption.prototype.generateClientKeyDecl = function (keyIdent, keyFuncDecl) {
-        var resultIdent = identifiers_1.Identifiers.generate();
-        var numIdent = identifiers_1.Identifiers.generate();
-        var indexIdent = identifiers_1.Identifiers.generate();
-        return {
-            type: 'VariableDeclaration',
-            declarations: [
-                {
-                    type: 'VariableDeclarator',
-                    id: {
-                        type: 'Identifier',
-                        name: keyIdent
-                    },
-                    init: {
-                        type: 'CallExpression',
-                        callee: {
-                            type: 'MemberExpression',
-                            object: {
-                                type: 'CallExpression',
-                                callee: {
-                                    type: 'MemberExpression',
-                                    object: {
-                                        type: 'CallExpression',
-                                        callee: {
-                                            type: 'MemberExpression',
-                                            object: {
-                                                type: 'Identifier',
-                                                name: keyFuncDecl.id ? keyFuncDecl.id.name : ''
-                                            },
-                                            property: {
-                                                type: 'Literal',
-                                                value: 'toString'
-                                            },
-                                            computed: true
-                                        },
-                                        arguments: []
-                                    },
-                                    property: {
-                                        type: 'Literal',
-                                        value: 'split'
-                                    },
-                                    computed: true
-                                },
-                                arguments: [
-                                    {
-                                        type: 'Literal',
-                                        value: ''
-                                    }
-                                ]
-                            },
-                            property: {
-                                type: 'Literal',
-                                value: 'reduce'
-                            },
-                            computed: true
-                        },
-                        arguments: [
-                            {
-                                type: 'FunctionExpression',
-                                id: null,
-                                generator: false,
-                                params: [
-                                    {
-                                        type: 'Identifier',
-                                        name: resultIdent
-                                    },
-                                    {
-                                        type: 'Identifier',
-                                        name: numIdent
-                                    },
-                                    {
-                                        type: 'Identifier',
-                                        name: indexIdent
-                                    }
-                                ],
-                                body: {
-                                    type: 'BlockStatement',
-                                    body: [
-                                        {
-                                            type: 'ReturnStatement',
-                                            argument: {
-                                                type: 'BinaryExpression',
-                                                left: {
-                                                    type: 'Identifier',
-                                                    name: resultIdent
-                                                },
-                                                operator: '^',
-                                                right: {
-                                                    type: 'BinaryExpression',
-                                                    operator: '+',
-                                                    left: {
-                                                        type: 'CallExpression',
-                                                        callee: {
-                                                            type: 'MemberExpression',
-                                                            object: {
-                                                                type: 'Identifier',
-                                                                name: numIdent
-                                                            },
-                                                            property: {
-                                                                type: 'Literal',
-                                                                value: 'charCodeAt'
-                                                            },
-                                                            computed: true
-                                                        },
-                                                        arguments: [
-                                                            {
-                                                                type: 'Literal',
-                                                                value: 0
-                                                            }
-                                                        ]
-                                                    },
-                                                    right: {
-                                                        type: 'Identifier',
-                                                        name: indexIdent
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    ]
-                                }
-                            },
-                            {
-                                type: 'Literal',
-                                value: 0
-                            }
-                        ]
-                    }
-                }
-            ],
-            kind: 'var'
-        };
+        var template = "var <%= varIdent %> = <%= funcDecl %>['toString']()['split']('')['reduce'](function(<%= resultIdent %>, <%= numIdent %>, <%= indexIdent %>) {return <%= resultIdent %> ^ <%= numIdent %>['charCodeAt'](0) + <%= indexIdent %>}, 0);";
+        return estemplate(template, {
+            varIdent: { type: 'Identifier', name: keyIdent },
+            funcDecl: keyFuncDecl.id,
+            resultIdent: { type: 'Identifier', name: identifiers_1.Identifiers.generate() },
+            numIdent: { type: 'Identifier', name: identifiers_1.Identifiers.generate() },
+            indexIdent: { type: 'Identifier', name: identifiers_1.Identifiers.generate() }
+        }).body[0];
     };
     /**
      * @protected
@@ -318,90 +197,12 @@ var CodeEncryption = /** @class */ (function (_super) {
                 value: value.charCodeAt(0) ^ key
             });
         });
-        var encryptedArrayExpression = {
-            type: 'ArrayExpression',
-            elements: encrypted
-        };
-        var valueIdent = identifiers_1.Identifiers.generate();
-        return {
-            type: 'CallExpression',
-            callee: {
-                type: 'MemberExpression',
-                object: {
-                    type: 'CallExpression',
-                    callee: {
-                        type: 'MemberExpression',
-                        object: encryptedArrayExpression,
-                        property: {
-                            type: 'Literal',
-                            value: 'map'
-                        },
-                        computed: true
-                    },
-                    arguments: [
-                        {
-                            type: 'FunctionExpression',
-                            id: null,
-                            generator: false,
-                            params: [
-                                {
-                                    type: 'Identifier',
-                                    name: valueIdent
-                                }
-                            ],
-                            body: {
-                                type: 'BlockStatement',
-                                body: [
-                                    {
-                                        type: 'ReturnStatement',
-                                        argument: {
-                                            type: 'CallExpression',
-                                            callee: {
-                                                type: 'MemberExpression',
-                                                object: {
-                                                    type: 'Identifier',
-                                                    name: 'String'
-                                                },
-                                                property: {
-                                                    type: 'Literal',
-                                                    value: 'fromCharCode'
-                                                },
-                                                computed: true
-                                            },
-                                            arguments: [
-                                                {
-                                                    type: 'BinaryExpression',
-                                                    left: {
-                                                        type: 'Identifier',
-                                                        name: valueIdent
-                                                    },
-                                                    operator: '^',
-                                                    right: {
-                                                        type: 'Identifier',
-                                                        name: keyIdent
-                                                    }
-                                                }
-                                            ]
-                                        }
-                                    }
-                                ]
-                            }
-                        }
-                    ]
-                },
-                property: {
-                    type: 'Literal',
-                    value: 'join'
-                },
-                computed: true
-            },
-            arguments: [
-                {
-                    type: 'Literal',
-                    value: ''
-                }
-            ]
-        };
+        var template = "[%= elements %]['map'](function(<%= valueIdent %>) {return String['fromCharCode'](<%= valueIdent %> ^ <%= key %>)})['join']('')";
+        return estemplate(template, {
+            elements: encrypted,
+            valueIdent: { type: 'Identifier', name: identifiers_1.Identifiers.generate() },
+            key: { type: 'Identifier', name: keyIdent }
+        }).body[0].expression;
     };
     /**
      * @protected
@@ -410,36 +211,10 @@ var CodeEncryption = /** @class */ (function (_super) {
      * @memberof CodeEncryption
      */
     CodeEncryption.prototype.generateTryCatchExpression = function (blockCodeDecryptExpr) {
-        return {
-            type: 'TryStatement',
-            block: {
-                type: 'BlockStatement',
-                body: [
-                    {
-                        type: 'ExpressionStatement',
-                        expression: {
-                            type: 'CallExpression',
-                            callee: {
-                                type: 'Identifier',
-                                name: 'eval'
-                            },
-                            arguments: [blockCodeDecryptExpr]
-                        }
-                    }
-                ]
-            },
-            handler: {
-                type: 'CatchClause',
-                param: {
-                    type: 'Identifier',
-                    name: 'e'
-                },
-                body: {
-                    type: 'BlockStatement',
-                    body: []
-                }
-            }
-        };
+        var template = 'try {eval(<%= block %>)} catch (e){}';
+        return estemplate(template, {
+            block: blockCodeDecryptExpr
+        }).body[0];
     };
     return CodeEncryption;
 }(transformations_1.BaseTransformation));

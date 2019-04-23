@@ -2,6 +2,7 @@ import * as estree from 'estree';
 import { Identifiers } from '../identifiers';
 import { InsertPosition } from '../insertPosition';
 import { BaseTransformation } from '../transformations';
+const estemplate = require('estemplate');
 
 class DebuggerBreakpointLoop extends BaseTransformation {
   /**
@@ -10,56 +11,16 @@ class DebuggerBreakpointLoop extends BaseTransformation {
    */
   public apply(): estree.Program {
     const funcDeclIdent: string = Identifiers.generate();
-    const loopFuncDecl: estree.FunctionDeclaration = {
-      type: 'FunctionDeclaration',
-      id: {
-        type: 'Identifier',
-        name: funcDeclIdent
-      },
-      params: [],
-      body: {
-        type: 'BlockStatement',
-        body: [
-          {
-            type: 'ExpressionStatement',
-            expression: {
-              type: 'CallExpression',
-              callee: {
-                type: 'Identifier',
-                name: 'eval'
-              },
-              arguments: [
-                {
-                  type: 'Literal',
-                  value: 'debugger'
-                }
-              ]
-            }
-          }
-        ]
-      }
-    };
 
-    const loopExpr: estree.ExpressionStatement = {
-      type: 'ExpressionStatement',
-      expression: {
-        type: 'CallExpression',
-        callee: {
-          type: 'Identifier',
-          name: 'setInterval'
-        },
-        arguments: [
-          {
-            type: 'Identifier',
-            name: funcDeclIdent
-          },
-          {
-            type: 'Literal',
-            value: 500
-          }
-        ]
-      }
-    };
+    const funcTemplate: string = 'function <%= funcIdent %>(){eval("debugger");}';
+    const loopFuncDecl: estree.FunctionDeclaration = estemplate(funcTemplate, {
+      funcIdent: { type: 'Identifier', name: funcDeclIdent }
+    }).body[0] as estree.FunctionDeclaration;
+
+    const loopTemplate: string = 'setInterval(<%= funcIdent %>, 500);';
+    const loopExpr: estree.ExpressionStatement = estemplate(loopTemplate, {
+      funcIdent: { type: 'Identifier', name: funcDeclIdent }
+    }).body[0] as estree.ExpressionStatement;
 
     this.ast.body.splice(InsertPosition.get(), 0, loopFuncDecl);
     this.ast.body.splice(InsertPosition.get(), 0, loopExpr);

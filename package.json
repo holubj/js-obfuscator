@@ -13,6 +13,7 @@
     "escope": "^3.6.0",
     "esmangle": "^1.0.1",
     "espree": "^5.0.1",
+    "estemplate": "^0.5.1",
     "estraverse": "^4.2.0",
     "js-yaml": "^3.13.1",
     "randomstring": "^1.1.5",

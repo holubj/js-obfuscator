@@ -29,6 +29,7 @@ var configuration_1 = require("../configuration");
 var identifiers_1 = require("../identifiers");
 var insertPosition_1 = require("../insertPosition");
 var transformations_1 = require("../transformations");
+var estemplate = require('estemplate');
 var LiteralObfuscation = /** @class */ (function (_super) {
     __extends(LiteralObfuscation, _super);
     function LiteralObfuscation() {
@@ -212,35 +213,13 @@ var LiteralObfuscation = /** @class */ (function (_super) {
      * @memberof LiteralObfuscation
      */
     LiteralObfuscation.prototype.generateAccessFuncDeclaration = function (accessFuncIdentifier, literalArrayIdentifier, shift) {
-        var argumentIdent = identifiers_1.Identifiers.generate();
-        return {
-            type: 'FunctionDeclaration',
-            id: { type: 'Identifier', name: accessFuncIdentifier },
-            generator: false,
-            params: [{ type: 'Identifier', name: argumentIdent }],
-            body: {
-                type: 'BlockStatement',
-                body: [
-                    {
-                        type: 'ReturnStatement',
-                        argument: {
-                            type: 'MemberExpression',
-                            object: {
-                                type: 'Identifier',
-                                name: literalArrayIdentifier
-                            },
-                            property: {
-                                type: 'BinaryExpression',
-                                operator: '-',
-                                left: { type: 'Identifier', name: argumentIdent },
-                                right: { type: 'Literal', value: shift }
-                            },
-                            computed: true
-                        }
-                    }
-                ]
-            }
-        };
+        var template = 'function <%= func %>(<%= argument %>){return <%= literalArray %>[<%= argument %> - <%= shiftLiteral %>]}';
+        return estemplate(template, {
+            func: { type: 'Identifier', name: accessFuncIdentifier },
+            argument: { type: 'Identifier', name: identifiers_1.Identifiers.generate() },
+            literalArray: { type: 'Identifier', name: literalArrayIdentifier },
+            shiftLiteral: { type: 'Literal', value: shift }
+        }).body[0];
     };
     /**
      * @protected

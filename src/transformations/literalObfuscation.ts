@@ -7,6 +7,7 @@ import { Verbose } from '../configuration';
 import { Identifiers } from '../identifiers';
 import { InsertPosition } from '../insertPosition';
 import { BaseTransformation } from '../transformations';
+const estemplate = require('estemplate');
 
 class LiteralObfuscation extends BaseTransformation {
   protected literals: string[] = [];
@@ -201,36 +202,14 @@ class LiteralObfuscation extends BaseTransformation {
    * @memberof LiteralObfuscation
    */
   protected generateAccessFuncDeclaration(accessFuncIdentifier: string, literalArrayIdentifier: string, shift: number): estree.FunctionDeclaration {
-    const argumentIdent: string = Identifiers.generate();
+    const template: string = 'function <%= func %>(<%= argument %>){return <%= literalArray %>[<%= argument %> - <%= shiftLiteral %>]}';
 
-    return {
-      type: 'FunctionDeclaration',
-      id: { type: 'Identifier', name: accessFuncIdentifier },
-      generator: false,
-      params: [{ type: 'Identifier', name: argumentIdent }],
-      body: {
-        type: 'BlockStatement',
-        body: [
-          {
-            type: 'ReturnStatement',
-            argument: {
-              type: 'MemberExpression',
-              object: {
-                type: 'Identifier',
-                name: literalArrayIdentifier
-              },
-              property: {
-                type: 'BinaryExpression',
-                operator: '-',
-                left: { type: 'Identifier', name: argumentIdent },
-                right: { type: 'Literal', value: shift }
-              },
-              computed: true
-            }
-          }
-        ]
-      }
-    };
+    return estemplate(template, {
+      func: { type: 'Identifier', name: accessFuncIdentifier },
+      argument: { type: 'Identifier', name: Identifiers.generate() },
+      literalArray: { type: 'Identifier', name: literalArrayIdentifier },
+      shiftLiteral: { type: 'Literal', value: shift }
+    }).body[0] as estree.FunctionDeclaration;
   }
 
   /**
