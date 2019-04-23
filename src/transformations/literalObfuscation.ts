@@ -6,7 +6,7 @@ import shuffle from 'shuffle-array';
 import { Verbose } from '../configuration';
 import { Identifiers } from '../identifiers';
 import { InsertPosition } from '../insertPosition';
-import { BaseTransformation } from '../transformations';
+import { BaseTransformation, isProperty } from '../transformations';
 const estemplate = require('estemplate');
 
 class LiteralObfuscation extends BaseTransformation {
@@ -27,21 +27,6 @@ class LiteralObfuscation extends BaseTransformation {
 
   /**
    * @protected
-   * @param {estree.Node} node
-   * @param {(estree.Node | null)} parent
-   * @returns {boolean}
-   * @memberof LiteralObfuscation
-   */
-  protected isProperty(node: estree.Node, parent: estree.Node | null): boolean {
-    if (parent === null) {
-      return false;
-    } else {
-      return parent.type === 'Property' && parent.key === node;
-    }
-  }
-
-  /**
-   * @protected
    * @returns {void}
    * @memberof LiteralObfuscation
    */
@@ -50,7 +35,7 @@ class LiteralObfuscation extends BaseTransformation {
 
     estraverse.replace(this.ast, {
       leave: (node: estree.Node, parent: estree.Node | null): estree.Node | void => {
-        if (node.type === 'Literal' && typeof node.value === 'string' && node.value !== 'use strict' && !this.isProperty(node, parent)) {
+        if (node.type === 'Literal' && typeof node.value === 'string' && node.value !== 'use strict' && !isProperty(node, parent)) {
           if (Math.random() <= this.settings.splitChance) {
             if (node.value.length >= 2) {
               count++;
@@ -84,7 +69,7 @@ class LiteralObfuscation extends BaseTransformation {
   protected fetchLiterals(): void {
     estraverse.replace(this.ast, {
       enter: (node: estree.Node, parent: estree.Node | null): estree.Node | void => {
-        if (node.type === 'Literal' && typeof node.value === 'string' && node.value !== 'use strict' && !this.isProperty(node, parent)) {
+        if (node.type === 'Literal' && typeof node.value === 'string' && node.value !== 'use strict' && !isProperty(node, parent)) {
           if (Math.random() <= this.settings.arrayChance) {
             if (!this.literals.find((literal: string) => literal === node.value)) {
               this.literals.push(node.value);
@@ -113,7 +98,7 @@ class LiteralObfuscation extends BaseTransformation {
 
     estraverse.replace(this.ast, {
       enter: (node: estree.Node, parent: estree.Node | null): estree.Node | void => {
-        if (node.type === 'Literal' && typeof node.value === 'string' && node.value !== 'use strict' && !this.isProperty(node, parent)) {
+        if (node.type === 'Literal' && typeof node.value === 'string' && node.value !== 'use strict' && !isProperty(node, parent)) {
           // some literals might be omitted based on chance settings
           if (this.literals.includes(node.value)) {
             count++;
@@ -134,7 +119,7 @@ class LiteralObfuscation extends BaseTransformation {
     let count: number = 0;
     estraverse.replace(this.ast, {
       leave: (node: estree.Node, parent: estree.Node | null): estree.Node | void => {
-        if (node.type === 'Literal' && typeof node.value === 'string' && node.value !== 'use strict' && !this.isProperty(node, parent)) {
+        if (node.type === 'Literal' && typeof node.value === 'string' && node.value !== 'use strict' && !isProperty(node, parent)) {
           if (Math.random() <= this.settings.base64Chance && !/[^A-Za-z0-9 ]/.test(node.value)) {
             count++;
 

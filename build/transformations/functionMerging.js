@@ -69,21 +69,6 @@ var FunctionMerging = /** @class */ (function (_super) {
     };
     /**
      * @protected
-     * @param {estree.Node} node
-     * @param {(estree.Node | null)} parent
-     * @returns {boolean}
-     * @memberof FunctionMerging
-     */
-    FunctionMerging.prototype.isProperty = function (node, parent) {
-        if (parent === null) {
-            return false;
-        }
-        else {
-            return parent.type === 'Property' && parent.key === node;
-        }
-    };
-    /**
-     * @protected
      * @param {estree.FunctionDeclaration} firstDeclaration
      * @param {estree.FunctionDeclaration} secondDeclaration
      * @returns {estree.FunctionDeclaration}
@@ -177,7 +162,6 @@ var FunctionMerging = /** @class */ (function (_super) {
      * @memberof FunctionMerging
      */
     FunctionMerging.prototype.extractLiteral = function (decl, defaultValue, decidingVariable, forbiddenLiteral) {
-        var _this = this;
         var literal = {
             type: 'Literal',
             value: defaultValue
@@ -185,7 +169,7 @@ var FunctionMerging = /** @class */ (function (_super) {
         var extracted = false;
         estraverse.replace(decl, {
             enter: function (node, parent) {
-                if (!extracted && node.type === 'Literal' && !_this.isProperty(node, parent) && (forbiddenLiteral === null || node.value !== forbiddenLiteral.value)) {
+                if (!extracted && node.type === 'Literal' && !transformations_1.isProperty(node, parent) && (forbiddenLiteral === null || node.value !== forbiddenLiteral.value)) {
                     literal = node;
                     extracted = true;
                     return decidingVariable;

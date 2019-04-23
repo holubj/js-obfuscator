@@ -3,7 +3,7 @@ import * as estraverse from 'estraverse';
 import * as estree from 'estree';
 import { configuration, Verbose } from '../configuration';
 import { Identifiers } from '../identifiers';
-import { BaseTransformation } from '../transformations';
+import { BaseTransformation, isProperty } from '../transformations';
 
 class FunctionMerging extends BaseTransformation {
   protected readonly UNDEFINED: number = -1;
@@ -51,21 +51,6 @@ class FunctionMerging extends BaseTransformation {
     Verbose.log(`${count * 2} function declarations merged into ${count}`.yellow);
 
     return this.ast;
-  }
-
-  /**
-   * @protected
-   * @param {estree.Node} node
-   * @param {(estree.Node | null)} parent
-   * @returns {boolean}
-   * @memberof FunctionMerging
-   */
-  protected isProperty(node: estree.Node, parent: estree.Node | null): boolean {
-    if (parent === null) {
-      return false;
-    } else {
-      return parent.type === 'Property' && parent.key === node;
-    }
   }
 
   /**
@@ -182,7 +167,7 @@ class FunctionMerging extends BaseTransformation {
     let extracted: boolean = false;
     estraverse.replace(decl, {
       enter: (node: estree.Node, parent: estree.Node | null): estree.Node | void => {
-        if (!extracted && node.type === 'Literal' && !this.isProperty(node, parent) && (forbiddenLiteral === null || node.value !== forbiddenLiteral.value)) {
+        if (!extracted && node.type === 'Literal' && !isProperty(node, parent) && (forbiddenLiteral === null || node.value !== forbiddenLiteral.value)) {
           literal = node;
           extracted = true;
           return decidingVariable;

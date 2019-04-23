@@ -62,7 +62,7 @@ var NumberObfuscation = /** @class */ (function (_super) {
         var count = 0;
         estraverse.replace(this.ast, {
             enter: function (node, parent) {
-                if (node.type === 'Literal' && typeof node.value === 'number' && Number.isInteger(node.value) && !_this.isProperty(node, parent)) {
+                if (node.type === 'Literal' && typeof node.value === 'number' && Number.isInteger(node.value) && !transformations_1.isProperty(node, parent)) {
                     if (node.value >= 0 && node.value < 10) {
                         if (Math.random() <= _this.settings.chance) {
                             count++;
@@ -113,21 +113,6 @@ var NumberObfuscation = /** @class */ (function (_super) {
         }
         else {
             return this.zero;
-        }
-    };
-    /**
-     * @protected
-     * @param {estree.Node} node
-     * @param {(estree.Node | null)} parent
-     * @returns {boolean}
-     * @memberof NumberObfuscation
-     */
-    NumberObfuscation.prototype.isProperty = function (node, parent) {
-        if (parent === null) {
-            return false;
-        }
-        else {
-            return parent.type === 'Property' && parent.key === node;
         }
     };
     return NumberObfuscation;

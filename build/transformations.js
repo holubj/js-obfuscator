@@ -8,6 +8,11 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var estraverse = __importStar(require("estraverse"));
+/**
+ * @export
+ * @abstract
+ * @class BaseTransformation
+ */
 var BaseTransformation = /** @class */ (function () {
     function BaseTransformation(ast, settings) {
         if (settings === void 0) { settings = {}; }
@@ -17,6 +22,11 @@ var BaseTransformation = /** @class */ (function () {
     return BaseTransformation;
 }());
 exports.BaseTransformation = BaseTransformation;
+/**
+ * @export
+ * @param {estree.Program} ast
+ * @returns {boolean}
+ */
 function canBeObfuscated(ast) {
     var result = true;
     estraverse.traverse(ast, {
@@ -38,3 +48,18 @@ exports.forbiddenEvalStatements = [
     'FunctionExpression',
     'ArrowFunctionExpression'
 ];
+/**
+ * @export
+ * @param {estree.Node} node
+ * @param {(estree.Node | null)} parent
+ * @returns {boolean}
+ */
+function isProperty(node, parent) {
+    if (parent === null) {
+        return false;
+    }
+    else {
+        return parent.type === 'Property' && parent.key === node;
+    }
+}
+exports.isProperty = isProperty;
