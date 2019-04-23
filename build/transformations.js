@@ -29,3 +29,12 @@ function canBeObfuscated(ast) {
     return result;
 }
 exports.canBeObfuscated = canBeObfuscated;
+exports.forbiddenEvalStatements = [
+    'ReturnStatement',
+    'BreakStatement',
+    'ContinueStatement',
+    'VariableDeclaration',
+    'FunctionDeclaration',
+    'FunctionExpression',
+    'ArrowFunctionExpression'
+];

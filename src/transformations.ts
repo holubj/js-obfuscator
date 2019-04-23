@@ -32,3 +32,13 @@ export function canBeObfuscated(ast: estree.Program): boolean {
 
   return result;
 }
+
+export const forbiddenEvalStatements: string[] = [
+  'ReturnStatement',
+  'BreakStatement',
+  'ContinueStatement',
+  'VariableDeclaration',
+  'FunctionDeclaration',
+  'FunctionExpression',
+  'ArrowFunctionExpression'
+];

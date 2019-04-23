@@ -5,7 +5,7 @@ import shuffle from 'shuffle-array';
 import { CodeGeneration } from '../codeGeneration';
 import { Verbose } from '../configuration';
 import { Identifiers } from '../identifiers';
-import { BaseTransformation } from '../transformations';
+import { BaseTransformation, forbiddenEvalStatements } from '../transformations';
 import ExpressionObfuscation from './expressionObfuscation';
 import LiteralObfuscation from './literalObfuscation';
 import NumberObufscation from './numberObfuscation';
@@ -13,16 +13,6 @@ import UnicodeLiteral from './unicodeLiteral';
 const estemplate = require('estemplate');
 
 class CodeEncryption extends BaseTransformation {
-  protected readonly forbiddenStatements: string[] = [
-    'ReturnStatement',
-    'BreakStatement',
-    'ContinueStatement',
-    'VariableDeclaration',
-    'FunctionDeclaration',
-    'FunctionExpression',
-    'ArrowFunctionExpression'
-  ];
-
   protected sealedTopLevelFunctions: string[] = [];
 
   /**
@@ -119,7 +109,7 @@ class CodeEncryption extends BaseTransformation {
 
     estraverse.traverse(expression, {
       enter: (node: estree.Node): void => {
-        if (this.forbiddenStatements.includes(node.type)) {
+        if (forbiddenEvalStatements.includes(node.type)) {
           suitable = false;
         }
       }

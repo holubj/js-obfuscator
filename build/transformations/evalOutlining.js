@@ -34,17 +34,7 @@ var unicodeLiteral_1 = __importDefault(require("./unicodeLiteral"));
 var EvalOutlining = /** @class */ (function (_super) {
     __extends(EvalOutlining, _super);
     function EvalOutlining() {
-        var _this = _super !== null && _super.apply(this, arguments) || this;
-        _this.forbiddenStatements = [
-            'ReturnStatement',
-            'BreakStatement',
-            'ContinueStatement',
-            'VariableDeclaration',
-            'FunctionDeclaration',
-            'FunctionExpression',
-            'ArrowFunctionExpression'
-        ];
-        return _this;
+        return _super !== null && _super.apply(this, arguments) || this;
     }
     /**
      * @returns {estree.Program}
@@ -118,11 +108,10 @@ var EvalOutlining = /** @class */ (function (_super) {
      * @memberof EvalOutlining
      */
     EvalOutlining.prototype.isSuitable = function (expression) {
-        var _this = this;
         var suitable = true;
         estraverse.traverse(expression, {
             enter: function (node) {
-                if (_this.forbiddenStatements.includes(node.type)) {
+                if (transformations_1.forbiddenEvalStatements.includes(node.type)) {
                     suitable = false;
                 }
             }

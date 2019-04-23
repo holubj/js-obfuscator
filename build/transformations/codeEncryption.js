@@ -38,15 +38,6 @@ var CodeEncryption = /** @class */ (function (_super) {
     __extends(CodeEncryption, _super);
     function CodeEncryption() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
-        _this.forbiddenStatements = [
-            'ReturnStatement',
-            'BreakStatement',
-            'ContinueStatement',
-            'VariableDeclaration',
-            'FunctionDeclaration',
-            'FunctionExpression',
-            'ArrowFunctionExpression'
-        ];
         _this.sealedTopLevelFunctions = [];
         return _this;
     }
@@ -125,11 +116,10 @@ var CodeEncryption = /** @class */ (function (_super) {
      * @memberof CodeEncryption
      */
     CodeEncryption.prototype.isSuitableBlock = function (expression) {
-        var _this = this;
         var suitable = true;
         estraverse.traverse(expression, {
             enter: function (node) {
-                if (_this.forbiddenStatements.includes(node.type)) {
+                if (transformations_1.forbiddenEvalStatements.includes(node.type)) {
                     suitable = false;
                 }
             }

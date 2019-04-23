@@ -3,23 +3,13 @@ import * as estraverse from 'estraverse';
 import * as estree from 'estree';
 import { CodeGeneration } from '../codeGeneration';
 import { Verbose } from '../configuration';
-import { BaseTransformation } from '../transformations';
+import { BaseTransformation, forbiddenEvalStatements } from '../transformations';
 import ExpressionObfuscation from './expressionObfuscation';
 import LiteralObfuscation from './literalObfuscation';
 import NumberObufscation from './numberObfuscation';
 import UnicodeLiteral from './unicodeLiteral';
 
 class EvalOutlining extends BaseTransformation {
-  protected readonly forbiddenStatements: string[] = [
-    'ReturnStatement',
-    'BreakStatement',
-    'ContinueStatement',
-    'VariableDeclaration',
-    'FunctionDeclaration',
-    'FunctionExpression',
-    'ArrowFunctionExpression'
-  ];
-
   /**
    * @returns {estree.Program}
    * @memberof EvalOutlining
@@ -107,7 +97,7 @@ class EvalOutlining extends BaseTransformation {
 
     estraverse.traverse(expression, {
       enter: (node: estree.Node): void => {
-        if (this.forbiddenStatements.includes(node.type)) {
+        if (forbiddenEvalStatements.includes(node.type)) {
           suitable = false;
         }
       }
