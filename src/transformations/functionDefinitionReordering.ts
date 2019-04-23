@@ -11,6 +11,8 @@ class FunctionDefinitonReordering extends BaseTransformation {
    * @memberof FunctionDefinitonReordering
    */
   public apply(): estree.Program {
+    let count: number = 0;
+
     estraverse.replace(this.ast, {
       enter: (node: estree.Node): estree.Node | void => {
         if (node.type === 'Program' || node.type === 'BlockStatement') {
@@ -35,10 +37,14 @@ class FunctionDefinitonReordering extends BaseTransformation {
             for (const declaration of declarations) {
               node.body.splice(insertIndex, 0, declaration);
             }
+
+            count += declarations.length;
           }
         }
       }
     });
+
+    Verbose.log(`${count} function declarations reordered`.yellow);
 
     return this.ast;
   }

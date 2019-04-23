@@ -38,16 +38,18 @@ var FunctionArgumentReordering = /** @class */ (function (_super) {
      */
     FunctionArgumentReordering.prototype.apply = function () {
         var _this = this;
+        var count = 0;
         estraverse.traverse(this.ast, {
             enter: function (node) {
                 if (node.type === 'FunctionDeclaration' && node.id !== null) {
                     if (_this.isSuitableFunc(node, node.id.name)) {
                         _this.reorderArguments(node.id.name, node.params.length);
-                        configuration_1.Verbose.log(("Arguments of function '" + node.id.name + "' reordered").yellow);
+                        count++;
                     }
                 }
             }
         });
+        configuration_1.Verbose.log(("Arguments of '" + count + "' functions reordered").yellow);
         return this.ast;
     };
     /**

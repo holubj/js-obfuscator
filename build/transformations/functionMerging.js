@@ -20,6 +20,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 var estraverse = __importStar(require("estraverse"));
+var configuration_1 = require("../configuration");
 var identifiers_1 = require("../identifiers");
 var transformations_1 = require("../transformations");
 var FunctionMerging = /** @class */ (function (_super) {
@@ -35,9 +36,13 @@ var FunctionMerging = /** @class */ (function (_super) {
      */
     FunctionMerging.prototype.apply = function () {
         var _this = this;
+        var count = 0;
         estraverse.replace(this.ast, {
             enter: function (node) {
                 if (node.type === 'Program' || node.type === 'BlockStatement') {
+                    if (node.type === 'Program' && (!configuration_1.configuration.identifierRenaming || !configuration_1.configuration.renameGlobals)) {
+                        return;
+                    }
                     var firstDeclarationIndex = _this.UNDEFINED;
                     for (var i = 0; i < node.body.length; i++) {
                         if (node.body[i].type === 'FunctionDeclaration' && _this.isSuitable(node.body[i])) {
@@ -50,6 +55,7 @@ var FunctionMerging = /** @class */ (function (_super) {
                                 node.body.splice(firstDeclarationIndex, 1);
                                 i--;
                                 firstDeclarationIndex = _this.UNDEFINED;
+                                count++;
                             }
                         }
                     }
@@ -57,6 +63,7 @@ var FunctionMerging = /** @class */ (function (_super) {
                 }
             }
         });
+        configuration_1.Verbose.log((count * 2 + " function declarations merged into " + count).yellow);
         return this.ast;
     };
     /**

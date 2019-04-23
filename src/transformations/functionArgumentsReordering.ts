@@ -11,16 +11,20 @@ class FunctionArgumentReordering extends BaseTransformation {
    * @memberof FunctionDefinitonReordering
    */
   public apply(): estree.Program {
+    let count: number = 0;
+
     estraverse.traverse(this.ast, {
       enter: (node: estree.Node): estree.Node | void => {
         if (node.type === 'FunctionDeclaration' && node.id !== null) {
           if (this.isSuitableFunc(node, node.id.name)) {
             this.reorderArguments(node.id.name, node.params.length);
-            Verbose.log(`Arguments of function '${node.id.name}' reordered`.yellow);
+            count++;
           }
         }
       }
     });
+
+    Verbose.log(`Arguments of '${count}' functions reordered`.yellow);
 
     return this.ast;
   }

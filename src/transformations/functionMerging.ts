@@ -1,5 +1,6 @@
 import * as estraverse from 'estraverse';
 import * as estree from 'estree';
+import { configuration, Verbose } from '../configuration';
 import { Identifiers } from '../identifiers';
 import { BaseTransformation } from '../transformations';
 
@@ -11,9 +12,15 @@ class FunctionMerging extends BaseTransformation {
    * @memberof FunctionMerging
    */
   public apply(): estree.Program {
+    let count: number = 0;
+
     estraverse.replace(this.ast, {
       enter: (node: estree.Node): estree.Node | void => {
         if (node.type === 'Program' || node.type === 'BlockStatement') {
+          if (node.type === 'Program' && (!configuration.identifierRenaming || !configuration.renameGlobals)) {
+            return;
+          }
+
           let firstDeclarationIndex: number = this.UNDEFINED;
           for (let i: number = 0; i < node.body.length; i++) {
             if (node.body[i].type === 'FunctionDeclaration' && this.isSuitable(node.body[i] as estree.FunctionDeclaration)) {
@@ -29,6 +36,8 @@ class FunctionMerging extends BaseTransformation {
                 node.body.splice(firstDeclarationIndex, 1);
                 i--;
                 firstDeclarationIndex = this.UNDEFINED;
+
+                count++;
               }
             }
           }
@@ -37,6 +46,8 @@ class FunctionMerging extends BaseTransformation {
         }
       }
     });
+
+    Verbose.log(`${count * 2} function declarations merged into ${count}`.yellow);
 
     return this.ast;
   }

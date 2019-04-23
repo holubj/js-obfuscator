@@ -24,6 +24,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 var estraverse = __importStar(require("estraverse"));
 var shuffle_array_1 = __importDefault(require("shuffle-array"));
+var configuration_1 = require("../configuration");
 var transformations_1 = require("../transformations");
 var FunctionDefinitonReordering = /** @class */ (function (_super) {
     __extends(FunctionDefinitonReordering, _super);
@@ -35,6 +36,7 @@ var FunctionDefinitonReordering = /** @class */ (function (_super) {
      * @memberof FunctionDefinitonReordering
      */
     FunctionDefinitonReordering.prototype.apply = function () {
+        var count = 0;
         estraverse.replace(this.ast, {
             enter: function (node) {
                 if (node.type === 'Program' || node.type === 'BlockStatement') {
@@ -57,10 +59,12 @@ var FunctionDefinitonReordering = /** @class */ (function (_super) {
                             var declaration = declarations_1[_i];
                             node.body.splice(insertIndex, 0, declaration);
                         }
+                        count += declarations.length;
                     }
                 }
             }
         });
+        configuration_1.Verbose.log((count + " function declarations reordered").yellow);
         return this.ast;
     };
     return FunctionDefinitonReordering;
