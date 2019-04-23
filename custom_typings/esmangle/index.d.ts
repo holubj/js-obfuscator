@@ -3,8 +3,5 @@ declare module 'esmangle' {
 
   export function mangle(program: estree.Program): estree.Program;
 
-  export function optimize(
-    program: estree.Program,
-    pipeline: any
-  ): estree.Program;
+  export function optimize(program: estree.Program, pipeline?: any): estree.Program;
 }

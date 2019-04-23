@@ -17,16 +17,15 @@ var BaseTransformation = /** @class */ (function () {
     return BaseTransformation;
 }());
 exports.BaseTransformation = BaseTransformation;
-function isSuitable(ast) {
-    var suitable = true;
+function canBeObfuscated(ast) {
+    var result = true;
     estraverse.traverse(ast, {
         enter: function (node) {
             if ((node.type === 'Identifier' && node.name === 'eval') || node.type === 'WithStatement') {
-                suitable = false;
+                result = false;
             }
         }
     });
-    return suitable;
+    return result;
 }
-exports.isSuitable = isSuitable;
-//# sourceMappingURL=transformations.js.map
+exports.canBeObfuscated = canBeObfuscated;

@@ -22,6 +22,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
+require("colors");
 var estraverse = __importStar(require("estraverse"));
 var shuffle_array_1 = __importDefault(require("shuffle-array"));
 var configuration_1 = require("../configuration");
@@ -70,4 +71,3 @@ var FunctionDefinitonReordering = /** @class */ (function (_super) {
     return FunctionDefinitonReordering;
 }(transformations_1.BaseTransformation));
 module.exports = FunctionDefinitonReordering;
-//# sourceMappingURL=functionDefinitionReordering.js.map

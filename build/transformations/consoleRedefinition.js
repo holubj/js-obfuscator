@@ -153,4 +153,3 @@ var ConsoleRedefinition = /** @class */ (function (_super) {
     return ConsoleRedefinition;
 }(transformations_1.BaseTransformation));
 module.exports = ConsoleRedefinition;
-//# sourceMappingURL=consoleRedefinition.js.map

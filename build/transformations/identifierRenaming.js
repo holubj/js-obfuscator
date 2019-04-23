@@ -19,6 +19,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
     result["default"] = mod;
     return result;
 };
+require("colors");
 var escope = __importStar(require("escope"));
 var estraverse = __importStar(require("estraverse"));
 var configuration_1 = require("../configuration");
@@ -97,4 +98,3 @@ var IdentifierRenaming = /** @class */ (function (_super) {
     return IdentifierRenaming;
 }(transformations_1.BaseTransformation));
 module.exports = IdentifierRenaming;
-//# sourceMappingURL=identifierRenaming.js.map

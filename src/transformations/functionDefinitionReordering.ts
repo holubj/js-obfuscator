@@ -1,3 +1,4 @@
+import 'colors';
 import escodegen from 'escodegen';
 import * as estraverse from 'estraverse';
 import * as estree from 'estree';

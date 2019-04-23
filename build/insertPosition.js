@@ -31,4 +31,3 @@ var InsertPosition = /** @class */ (function () {
     return InsertPosition;
 }());
 exports.InsertPosition = InsertPosition;
-//# sourceMappingURL=insertPosition.js.map

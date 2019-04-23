@@ -19,6 +19,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
     result["default"] = mod;
     return result;
 };
+require("colors");
 var estraverse = __importStar(require("estraverse"));
 var configuration_1 = require("../configuration");
 var identifiers_1 = require("../identifiers");
@@ -40,7 +41,7 @@ var FunctionMerging = /** @class */ (function (_super) {
         estraverse.replace(this.ast, {
             enter: function (node) {
                 if (node.type === 'Program' || node.type === 'BlockStatement') {
-                    if (node.type === 'Program' && (!configuration_1.configuration.identifierRenaming || !configuration_1.configuration.renameGlobals)) {
+                    if (node.type === 'Program' && (!configuration_1.configuration.identifiers.rename || !configuration_1.configuration.identifiers.renameGlobals)) {
                         return;
                     }
                     var firstDeclarationIndex = _this.UNDEFINED;
@@ -264,4 +265,3 @@ var FunctionMerging = /** @class */ (function (_super) {
     return FunctionMerging;
 }(transformations_1.BaseTransformation));
 module.exports = FunctionMerging;
-//# sourceMappingURL=functionMerging.js.map

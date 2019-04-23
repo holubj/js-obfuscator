@@ -19,6 +19,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
     result["default"] = mod;
     return result;
 };
+require("colors");
 var estraverse = __importStar(require("estraverse"));
 var configuration_1 = require("../configuration");
 var transformations_1 = require("../transformations");
@@ -92,4 +93,3 @@ var ExpressionObfuscation = /** @class */ (function (_super) {
     return ExpressionObfuscation;
 }(transformations_1.BaseTransformation));
 module.exports = ExpressionObfuscation;
-//# sourceMappingURL=expressionObfuscation.js.map

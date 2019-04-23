@@ -11,6 +11,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 require("colors");
+var esmangle_1 = __importDefault(require("esmangle"));
 var espree_1 = __importDefault(require("espree"));
 var fs = __importStar(require("fs"));
 var codeGeneration_1 = require("./codeGeneration");
@@ -21,7 +22,7 @@ var transformations_1 = require("./transformations");
 var identifierRenaming_1 = __importDefault(require("./transformations/identifierRenaming"));
 Error.stackTraceLimit = Infinity;
 if (process.argv.length < 3) {
-    console.log('Usage: node ' + process.argv[1] + ' FILENAME');
+    console.log('Usage: npm run inputFile [outputFile]');
     process.exit(1);
 }
 var code = '';
@@ -33,16 +34,22 @@ catch (err) {
     console.log("Unable to read input file " + inputFile);
     process.exit(1);
 }
-var p = espree_1.default.parse(code);
-// p = esmangle.optimize(p, null);
-// p = esmangle.mangle(p);
-// console.log(esvalid.isValid(p));
-if (transformations_1.isSuitable(p)) {
+var outputFile = inputFile + '.obf';
+if (process.argv.length > 3) {
+    outputFile = process.argv[3];
+}
+var p = espree_1.default.parse(code, {
+    ecmaVersion: 5
+});
+if (configuration_1.configuration.optimizeInput) {
+    p = esmangle_1.default.optimize(p);
+}
+if (transformations_1.canBeObfuscated(p)) {
     identifiers_1.Identifiers.init(p);
     insertPosition_1.InsertPosition.init(p);
-    if (configuration_1.configuration.identifierRenaming) {
+    if (configuration_1.configuration.identifiers.rename) {
         p = new identifierRenaming_1.default(p, {
-            renameGlobals: configuration_1.configuration.renameGlobals
+            renameGlobals: configuration_1.configuration.identifiers.renameGlobals
         }).apply();
     }
     for (var _i = 0, _a = configuration_1.configuration.stream; _i < _a.length; _i++) {
@@ -56,10 +63,12 @@ if (transformations_1.isSuitable(p)) {
             configuration_1.Verbose.log('---------------------');
         }
     }
+    if (configuration_1.configuration.optimizeOutput) {
+        p = esmangle_1.default.optimize(p);
+    }
     var result = codeGeneration_1.CodeGeneration.generate(p);
-    console.log(result);
+    fs.writeFileSync(outputFile, result);
 }
 else {
     console.log("Program with 'eval' or 'with' command cannot be obfuscated".red);
 }
-//# sourceMappingURL=obfuscation.js.map

@@ -1,3 +1,4 @@
+import 'colors';
 import * as escope from 'escope';
 import * as estraverse from 'estraverse';
 import * as estree from 'estree';

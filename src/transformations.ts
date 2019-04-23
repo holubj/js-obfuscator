@@ -19,16 +19,16 @@ export abstract class BaseTransformation {
   public abstract apply(): estree.Program;
 }
 
-export function isSuitable(ast: estree.Program): boolean {
-  let suitable: boolean = true;
+export function canBeObfuscated(ast: estree.Program): boolean {
+  let result: boolean = true;
 
   estraverse.traverse(ast, {
     enter: (node: estree.Node): void => {
       if ((node.type === 'Identifier' && node.name === 'eval') || node.type === 'WithStatement') {
-        suitable = false;
+        result = false;
       }
     }
   });
 
-  return suitable;
+  return result;
 }

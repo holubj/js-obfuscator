@@ -22,6 +22,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
     result["default"] = mod;
     return result;
 };
+require("colors");
 var escodegen_1 = __importDefault(require("escodegen"));
 var estraverse = __importStar(require("estraverse"));
 var configuration_1 = require("../configuration");
@@ -76,4 +77,3 @@ var UnicodeLiteral = /** @class */ (function (_super) {
     return UnicodeLiteral;
 }(transformations_1.BaseTransformation));
 module.exports = UnicodeLiteral;
-//# sourceMappingURL=unicodeLiteral.js.map

@@ -34,4 +34,3 @@ var Verbose = /** @class */ (function () {
 }());
 exports.Verbose = Verbose;
 Verbose.isEnabled = exports.configuration.verbose;
-//# sourceMappingURL=configuration.js.map

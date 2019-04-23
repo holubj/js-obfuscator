@@ -1,6 +1,9 @@
 verbose: true
-identifierRenaming: true
-renameGlobals: true
+optimizeInput: false
+optimizeOutput: false
+identifiers:
+  rename: true
+  renameGlobals: true
 stream:
   - name: Debugger Breakpoint Loop
     file: ./transformations/debuggerBreakpointLoop.js
@@ -18,6 +21,9 @@ stream:
     enabled: true
     settings:
       chance: 0.5 # 50% of numbers obfuscated
+  - name: Function Arguments Reordering
+    file: ./transformations/functionArgumentsReordering.js
+    enabled: true
   - name: Operator Outlining
     file: ./transformations/operatorOutlining.js
     enabled: true
@@ -46,9 +52,6 @@ stream:
       undefinedChance: 0.8 # 80% of 'undefined' expression obfuscated
   - name: Function Definition Reordering
     file: ./transformations/functionDefinitionReordering.js
-    enabled: true
-  - name: Function Arguments Reordering
-    file: ./transformations/functionArgumentsReordering.js
     enabled: true
   - name: Function Merging
     file: ./transformations/functionMerging.js

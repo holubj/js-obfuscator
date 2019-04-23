@@ -1,3 +1,4 @@
+import 'colors';
 import * as estraverse from 'estraverse';
 import * as estree from 'estree';
 import { configuration, Verbose } from '../configuration';
@@ -17,7 +18,7 @@ class FunctionMerging extends BaseTransformation {
     estraverse.replace(this.ast, {
       enter: (node: estree.Node): estree.Node | void => {
         if (node.type === 'Program' || node.type === 'BlockStatement') {
-          if (node.type === 'Program' && (!configuration.identifierRenaming || !configuration.renameGlobals)) {
+          if (node.type === 'Program' && (!configuration.identifiers.rename || !configuration.identifiers.renameGlobals)) {
             return;
           }
 

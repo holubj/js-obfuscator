@@ -2,19 +2,18 @@ import 'colors';
 import esmangle from 'esmangle';
 import espree from 'espree';
 import * as estree from 'estree';
-import esvalid from 'esvalid';
 import * as fs from 'fs';
 import { CodeGeneration } from './codeGeneration';
 import { configuration, Verbose } from './configuration';
 import { Identifiers } from './identifiers';
 import { InsertPosition } from './insertPosition';
-import { BaseTransformation, isSuitable } from './transformations';
+import { BaseTransformation, canBeObfuscated } from './transformations';
 import IdentifierRenaming from './transformations/identifierRenaming';
 
 Error.stackTraceLimit = Infinity;
 
 if (process.argv.length < 3) {
-  console.log('Usage: node ' + process.argv[1] + ' FILENAME');
+  console.log('Usage: npm run inputFile [outputFile]');
   process.exit(1);
 }
 
@@ -28,19 +27,26 @@ try {
   process.exit(1);
 }
 
-let p: estree.Program = espree.parse(code);
-// p = esmangle.optimize(p, null);
-// p = esmangle.mangle(p);
+let outputFile: string = inputFile + '.obf';
+if (process.argv.length > 3) {
+  outputFile = process.argv[3];
+}
 
-// console.log(esvalid.isValid(p));
+let p: estree.Program = espree.parse(code, {
+  ecmaVersion: 5
+});
 
-if (isSuitable(p)) {
+if (configuration.optimizeInput) {
+  p = esmangle.optimize(p);
+}
+
+if (canBeObfuscated(p)) {
   Identifiers.init(p);
   InsertPosition.init(p);
 
-  if (configuration.identifierRenaming) {
+  if (configuration.identifiers.rename) {
     p = new IdentifierRenaming(p, {
-      renameGlobals: configuration.renameGlobals
+      renameGlobals: configuration.identifiers.renameGlobals
     }).apply();
   }
 
@@ -55,9 +61,13 @@ if (isSuitable(p)) {
     }
   }
 
+  if (configuration.optimizeOutput) {
+    p = esmangle.optimize(p);
+  }
+
   const result: string = CodeGeneration.generate(p);
 
-  console.log(result);
+  fs.writeFileSync(outputFile, result);
 } else {
   console.log("Program with 'eval' or 'with' command cannot be obfuscated".red);
 }

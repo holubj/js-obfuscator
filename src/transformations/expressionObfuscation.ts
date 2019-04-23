@@ -1,3 +1,4 @@
+import 'colors';
 import * as estraverse from 'estraverse';
 import * as estree from 'estree';
 import { Verbose } from '../configuration';

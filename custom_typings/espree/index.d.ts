@@ -1,9 +1,9 @@
 declare module 'espree' {
   import * as estree from 'estree';
   interface ParseOpts {
-    attachComment: boolean;
-    comment: boolean;
-    loc: boolean;
+    attachComment?: boolean;
+    comment?: boolean;
+    loc?: boolean;
     ecmaVersion?: number;
     ecmaFeatures?: {
       arrowFunctions: boolean;

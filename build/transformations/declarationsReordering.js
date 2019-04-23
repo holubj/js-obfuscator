@@ -183,4 +183,3 @@ var DeclarationsReordering = /** @class */ (function (_super) {
     return DeclarationsReordering;
 }(transformations_1.BaseTransformation));
 module.exports = DeclarationsReordering;
-//# sourceMappingURL=declarationsReordering.js.map

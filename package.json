@@ -3,8 +3,7 @@
   "version": "1.0.0",
   "description": "JavaScript minifier and obfuscator",
   "scripts": {
-    "tsc": "tsc",
-    "start": "tsc && node ./build/obfuscation.js ./sample/simple.js"
+    "start": "tsc && node ./build/obfuscation.js"
   },
   "author": "Jakub Holub",
   "license": "ISC",
@@ -15,7 +14,6 @@
     "esmangle": "^1.0.1",
     "espree": "^5.0.1",
     "estraverse": "^4.2.0",
-    "esvalid": "^1.1.0",
     "js-yaml": "^3.13.1",
     "randomstring": "^1.1.5",
     "shuffle-array": "^1.0.1",

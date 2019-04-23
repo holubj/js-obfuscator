@@ -267,4 +267,3 @@ var LiteralObfuscation = /** @class */ (function (_super) {
     return LiteralObfuscation;
 }(transformations_1.BaseTransformation));
 module.exports = LiteralObfuscation;
-//# sourceMappingURL=literalObfuscation.js.map
