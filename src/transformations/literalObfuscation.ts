@@ -104,7 +104,7 @@ class LiteralObfuscation extends BaseTransformation {
           if (this.literals.includes(node.value)) {
             count++;
             const index: number = this.literals.findIndex((literal: string) => literal === node.value);
-            return this.generateAccessFuncCall(accessFuncIdentifier, index + shift);
+            return this.generateAccessFuncCall(accessFuncIdentifier, index, shift);
           }
         }
       }
@@ -215,11 +215,12 @@ class LiteralObfuscation extends BaseTransformation {
    * @memberof LiteralObfuscation
    */
   protected generateAccessFuncDeclaration(accessFuncIdentifier: string, literalArrayIdentifier: string, shift: number): estree.FunctionDeclaration {
-    const template: string = 'function <%= func %>(<%= argument %>){return <%= literalArray %>[<%= argument %> - <%= shiftLiteral %>]}';
+    const template: string = 'function <%= func %>(<%= index %>, <%= power %>){return <%= literalArray %>[<%= index %> - <%= shiftLiteral %> >> <%= power %>]}';
 
     return estemplate(template, {
       func: { type: 'Identifier', name: accessFuncIdentifier },
-      argument: { type: 'Identifier', name: Identifiers.generate() },
+      index: { type: 'Identifier', name: Identifiers.generate() },
+      power: { type: 'Identifier', name: Identifiers.generate() },
       literalArray: { type: 'Identifier', name: literalArrayIdentifier },
       shiftLiteral: { type: 'Literal', value: shift }
     }).body[0] as estree.FunctionDeclaration;
@@ -232,7 +233,8 @@ class LiteralObfuscation extends BaseTransformation {
    * @returns {estree.CallExpression}
    * @memberof LiteralObfuscation
    */
-  protected generateAccessFuncCall(accessFuncIdentifier: string, index: number): estree.CallExpression {
+  protected generateAccessFuncCall(accessFuncIdentifier: string, index: number, shift: number): estree.CallExpression {
+    const power: number = Math.floor(Math.random() * 9) + 1;
     return {
       type: 'CallExpression',
       callee: {
@@ -242,7 +244,11 @@ class LiteralObfuscation extends BaseTransformation {
       arguments: [
         {
           type: 'Literal',
-          value: index
+          value: (index << power) + shift
+        },
+        {
+          type: 'Literal',
+          value: power
         }
       ]
     };

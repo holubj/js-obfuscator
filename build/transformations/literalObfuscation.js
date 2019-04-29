@@ -123,7 +123,7 @@ var LiteralObfuscation = /** @class */ (function (_super) {
                     if (_this.literals.includes(node.value)) {
                         count++;
                         var index = _this.literals.findIndex(function (literal) { return literal === node.value; });
-                        return _this.generateAccessFuncCall(accessFuncIdentifier, index + shift);
+                        return _this.generateAccessFuncCall(accessFuncIdentifier, index, shift);
                     }
                 }
             }
@@ -225,10 +225,11 @@ var LiteralObfuscation = /** @class */ (function (_super) {
      * @memberof LiteralObfuscation
      */
     LiteralObfuscation.prototype.generateAccessFuncDeclaration = function (accessFuncIdentifier, literalArrayIdentifier, shift) {
-        var template = 'function <%= func %>(<%= argument %>){return <%= literalArray %>[<%= argument %> - <%= shiftLiteral %>]}';
+        var template = 'function <%= func %>(<%= index %>, <%= power %>){return <%= literalArray %>[<%= index %> - <%= shiftLiteral %> >> <%= power %>]}';
         return estemplate(template, {
             func: { type: 'Identifier', name: accessFuncIdentifier },
-            argument: { type: 'Identifier', name: identifiers_1.Identifiers.generate() },
+            index: { type: 'Identifier', name: identifiers_1.Identifiers.generate() },
+            power: { type: 'Identifier', name: identifiers_1.Identifiers.generate() },
             literalArray: { type: 'Identifier', name: literalArrayIdentifier },
             shiftLiteral: { type: 'Literal', value: shift }
         }).body[0];
@@ -240,7 +241,8 @@ var LiteralObfuscation = /** @class */ (function (_super) {
      * @returns {estree.CallExpression}
      * @memberof LiteralObfuscation
      */
-    LiteralObfuscation.prototype.generateAccessFuncCall = function (accessFuncIdentifier, index) {
+    LiteralObfuscation.prototype.generateAccessFuncCall = function (accessFuncIdentifier, index, shift) {
+        var power = Math.floor(Math.random() * 9) + 1;
         return {
             type: 'CallExpression',
             callee: {
@@ -250,7 +252,11 @@ var LiteralObfuscation = /** @class */ (function (_super) {
             arguments: [
                 {
                     type: 'Literal',
-                    value: index
+                    value: (index << power) + shift
+                },
+                {
+                    type: 'Literal',
+                    value: power
                 }
             ]
         };
