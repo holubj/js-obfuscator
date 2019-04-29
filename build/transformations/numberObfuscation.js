@@ -69,16 +69,16 @@ var NumberObfuscation = /** @class */ (function (_super) {
                             return _this.getNumberExpression(node.value);
                         }
                     }
-                    var numeralSystem = Math.floor(Math.random() * 3) + 1;
+                    var numeralSystem = Math.floor(Math.random() * 10) + 1;
                     var value = '';
-                    switch (numeralSystem) {
-                        case 1:
+                    switch (true) {
+                        case numeralSystem < 8:
                             value = '0x' + node.value.toString(16);
                             break;
-                        case 2:
+                        case numeralSystem < 10:
                             value = '0o' + node.value.toString(8);
                             break;
-                        case 3:
+                        case numeralSystem === 10:
                             value = '0b' + node.value.toString(2);
                             break;
                     }

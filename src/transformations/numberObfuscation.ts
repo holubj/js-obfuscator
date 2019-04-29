@@ -44,16 +44,16 @@ class NumberObfuscation extends BaseTransformation {
             }
           }
 
-          const numeralSystem: number = Math.floor(Math.random() * 3) + 1;
+          const numeralSystem: number = Math.floor(Math.random() * 10) + 1;
           let value: string = '';
-          switch (numeralSystem) {
-            case 1:
+          switch (true) {
+            case numeralSystem < 8:
               value = '0x' + node.value.toString(16);
               break;
-            case 2:
+            case numeralSystem < 10:
               value = '0o' + node.value.toString(8);
               break;
-            case 3:
+            case numeralSystem === 10:
               value = '0b' + node.value.toString(2);
               break;
           }
