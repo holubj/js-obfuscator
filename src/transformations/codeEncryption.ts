@@ -9,7 +9,6 @@ import { BaseTransformation, forbiddenEvalStatements } from '../transformations'
 import ExpressionObfuscation from './expressionObfuscation';
 import LiteralObfuscation from './literalObfuscation';
 import NumberObufscation from './numberObfuscation';
-import UnicodeLiteral from './unicodeLiteral';
 const estemplate = require('estemplate');
 
 class CodeEncryption extends BaseTransformation {
@@ -72,10 +71,9 @@ class CodeEncryption extends BaseTransformation {
             new LiteralObfuscation(program, {
               splitChance: 0.8,
               arrayChance: 0,
-              base64Chance: 0.8
+              base64Chance: 0.8,
+              unicodeChance: 1
             }).apply();
-
-            new UnicodeLiteral(program).apply();
 
             new ExpressionObfuscation(program, {
               booleanChance: 0.8,

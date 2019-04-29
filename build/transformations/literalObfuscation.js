@@ -12,6 +12,9 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 var __importStar = (this && this.__importStar) || function (mod) {
     if (mod && mod.__esModule) return mod;
     var result = {};
@@ -19,10 +22,8 @@ var __importStar = (this && this.__importStar) || function (mod) {
     result["default"] = mod;
     return result;
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 require("colors");
+var escodegen_1 = __importDefault(require("escodegen"));
 var estraverse = __importStar(require("estraverse"));
 var shuffle_array_1 = __importDefault(require("shuffle-array"));
 var configuration_1 = require("../configuration");
@@ -46,6 +47,7 @@ var LiteralObfuscation = /** @class */ (function (_super) {
         this.fetchLiterals();
         this.moveLiteralsToLiteralArray();
         this.base64EncodeLiterals();
+        this.unicodeEscapeLiterals();
         return this.ast;
     };
     /**
@@ -157,6 +159,31 @@ var LiteralObfuscation = /** @class */ (function (_super) {
         });
         configuration_1.Verbose.log((count + " literals encoded to base64.").yellow);
     };
+    LiteralObfuscation.prototype.unicodeEscapeLiterals = function () {
+        var _this = this;
+        var count = 0;
+        estraverse.replace(this.ast, {
+            enter: function (node) {
+                if (node.type === 'Literal') {
+                    if (typeof node.value === 'string') {
+                        if (node.value === 'use strict') {
+                            return;
+                        }
+                        if (Math.random() <= _this.settings.unicodeChance) {
+                            // @ts-ignore
+                            node['x-verbatim-property'] = {
+                                content: "'" + _this.unicodeEscape(node.value) + "'",
+                                precedence: escodegen_1.default.Precedence.Primary
+                            };
+                            count++;
+                            return node;
+                        }
+                    }
+                }
+            }
+        });
+        configuration_1.Verbose.log((count + " literals converted to unicode escape sequence").yellow);
+    };
     /**
      * @protected
      * @param {string} ident
@@ -227,6 +254,20 @@ var LiteralObfuscation = /** @class */ (function (_super) {
                 }
             ]
         };
+    };
+    /**
+     * https://gist.github.com/mathiasbynens/1243213
+     * @protected
+     * @param {string} str
+     * @returns {string}
+     * @memberof UnicodeLiteral
+     */
+    LiteralObfuscation.prototype.unicodeEscape = function (str) {
+        return str.replace(/[\s\S]/g, function (character) {
+            var escape = character.charCodeAt(0).toString(16);
+            var longhand = escape.length > 2;
+            return '\\' + (longhand ? 'u' : 'x') + ('0000' + escape).slice(longhand ? -4 : -2);
+        });
     };
     return LiteralObfuscation;
 }(transformations_1.BaseTransformation));

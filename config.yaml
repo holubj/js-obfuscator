@@ -41,9 +41,7 @@ stream:
       splitChance: 0.25 # ~25% of strings splitted
       arrayChance: 0.85 # ~85% of strings moved to array
       base64Chance: 0.25 # ~25% of strings encoded to base64
-  - name: Unicode Literal
-    file: ./transformations/unicodeLiteral.js
-    enabled: true
+      unicodeChance: 1 # 100% of strings converted to unicode escape sequence
   - name: Expression Obfuscation
     file: ./transformations/expressionObfuscation.js
     enabled: true

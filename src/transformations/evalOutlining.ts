@@ -7,7 +7,6 @@ import { BaseTransformation, forbiddenEvalStatements } from '../transformations'
 import ExpressionObfuscation from './expressionObfuscation';
 import LiteralObfuscation from './literalObfuscation';
 import NumberObufscation from './numberObfuscation';
-import UnicodeLiteral from './unicodeLiteral';
 
 class EvalOutlining extends BaseTransformation {
   /**
@@ -60,10 +59,9 @@ class EvalOutlining extends BaseTransformation {
             new LiteralObfuscation(program, {
               splitChance: 0.8,
               arrayChance: 0,
-              base64Chance: 0.8
+              base64Chance: 0.8,
+              unicodeChance: 1
             }).apply();
-
-            new UnicodeLiteral(program).apply();
 
             new ExpressionObfuscation(program, {
               booleanChance: 0.8,

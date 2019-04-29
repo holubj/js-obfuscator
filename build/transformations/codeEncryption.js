@@ -32,7 +32,6 @@ var transformations_1 = require("../transformations");
 var expressionObfuscation_1 = __importDefault(require("./expressionObfuscation"));
 var literalObfuscation_1 = __importDefault(require("./literalObfuscation"));
 var numberObfuscation_1 = __importDefault(require("./numberObfuscation"));
-var unicodeLiteral_1 = __importDefault(require("./unicodeLiteral"));
 var estemplate = require('estemplate');
 var CodeEncryption = /** @class */ (function (_super) {
     __extends(CodeEncryption, _super);
@@ -90,9 +89,9 @@ var CodeEncryption = /** @class */ (function (_super) {
                         new literalObfuscation_1.default(program, {
                             splitChance: 0.8,
                             arrayChance: 0,
-                            base64Chance: 0.8
+                            base64Chance: 0.8,
+                            unicodeChance: 1
                         }).apply();
-                        new unicodeLiteral_1.default(program).apply();
                         new expressionObfuscation_1.default(program, {
                             booleanChance: 0.8,
                             undefinedChance: 0.8

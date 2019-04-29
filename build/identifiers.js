@@ -35,7 +35,7 @@ var Identifiers = /** @class */ (function () {
     Identifiers.generate = function () {
         var identifier;
         do {
-            identifier = '_0x' + randomstring.generate({ length: 10, charset: 'hex' });
+            identifier = '_0x' + randomstring.generate({ length: 8, charset: 'hex' });
         } while (this.usedIdentifiers.has(identifier));
         this.usedIdentifiers.add(identifier);
         return identifier;
