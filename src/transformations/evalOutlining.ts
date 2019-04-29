@@ -3,7 +3,7 @@ import * as estraverse from 'estraverse';
 import * as estree from 'estree';
 import { CodeGeneration } from '../codeGeneration';
 import { Verbose } from '../configuration';
-import { BaseTransformation, forbiddenEvalStatements } from '../transformations';
+import { BaseTransformation, forbiddenEvalStatements, loopStatements } from '../transformations';
 import ExpressionObfuscation from './expressionObfuscation';
 import LiteralObfuscation from './literalObfuscation';
 import NumberObufscation from './numberObfuscation';
@@ -17,8 +17,12 @@ class EvalOutlining extends BaseTransformation {
     let count: number = 0;
 
     estraverse.replace(this.ast, {
-      enter: (node: estree.Node, parent: estree.Node | null): estree.Node | void => {
-        if (parent !== null && parent.type === 'BlockStatement') {
+      leave: (node: estree.Node): estree.Node | estraverse.VisitorOption | void => {
+        if (loopStatements.includes(node.type)) {
+          return estraverse.VisitorOption.Skip;
+        }
+
+        if (node.type === 'BlockStatement') {
           if (!this.isSuitable(node)) {
             return;
           }
@@ -50,7 +54,7 @@ class EvalOutlining extends BaseTransformation {
             const program: estree.Program = {
               type: 'Program',
               body: [block],
-              sourceType: 'module'
+              sourceType: 'script'
             };
 
             const originalVerboseState: boolean = Verbose.isEnabled;
@@ -73,7 +77,6 @@ class EvalOutlining extends BaseTransformation {
             }).apply();
 
             Verbose.isEnabled = originalVerboseState;
-
             return program.body[0];
           }
         }

@@ -53,6 +53,8 @@ export const forbiddenEvalStatements: string[] = [
   'ArrowFunctionExpression'
 ];
 
+export const loopStatements: string[] = ['ForStatement', 'ForOfStatement', 'ForInStatement', 'WhileStatement', 'DoWhileStatement'];
+
 /**
  * @export
  * @param {estree.Node} node

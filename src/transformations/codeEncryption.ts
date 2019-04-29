@@ -5,7 +5,7 @@ import shuffle from 'shuffle-array';
 import { CodeGeneration } from '../codeGeneration';
 import { Verbose } from '../configuration';
 import { Identifiers } from '../identifiers';
-import { BaseTransformation, forbiddenEvalStatements } from '../transformations';
+import { BaseTransformation, forbiddenEvalStatements, loopStatements } from '../transformations';
 import ExpressionObfuscation from './expressionObfuscation';
 import LiteralObfuscation from './literalObfuscation';
 import NumberObufscation from './numberObfuscation';
@@ -24,9 +24,13 @@ class CodeEncryption extends BaseTransformation {
     let currentTopLevelFunction: string = '';
 
     estraverse.replace(this.ast, {
-      enter: (node: estree.Node): void => {
+      enter: (node: estree.Node): estraverse.VisitorOption | void => {
         if (currentTopLevelFunction === '' && node.type === 'FunctionDeclaration' && node.id !== null) {
           currentTopLevelFunction = node.id.name;
+        }
+
+        if (loopStatements.includes(node.type)) {
+          return estraverse.VisitorOption.Skip;
         }
       },
       leave: (node: estree.Node): estree.Node | void => {

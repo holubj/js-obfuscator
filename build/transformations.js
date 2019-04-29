@@ -48,6 +48,7 @@ exports.forbiddenEvalStatements = [
     'FunctionExpression',
     'ArrowFunctionExpression'
 ];
+exports.loopStatements = ['ForStatement', 'ForOfStatement', 'ForInStatement', 'WhileStatement', 'DoWhileStatement'];
 /**
  * @export
  * @param {estree.Node} node

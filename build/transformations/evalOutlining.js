@@ -43,8 +43,11 @@ var EvalOutlining = /** @class */ (function (_super) {
         var _this = this;
         var count = 0;
         estraverse.replace(this.ast, {
-            enter: function (node, parent) {
-                if (parent !== null && parent.type === 'BlockStatement') {
+            leave: function (node) {
+                if (transformations_1.loopStatements.includes(node.type)) {
+                    return estraverse.VisitorOption.Skip;
+                }
+                if (node.type === 'BlockStatement') {
                     if (!_this.isSuitable(node)) {
                         return;
                     }
@@ -74,7 +77,7 @@ var EvalOutlining = /** @class */ (function (_super) {
                         var program = {
                             type: 'Program',
                             body: [block],
-                            sourceType: 'module'
+                            sourceType: 'script'
                         };
                         var originalVerboseState = configuration_1.Verbose.isEnabled;
                         configuration_1.Verbose.isEnabled = false;

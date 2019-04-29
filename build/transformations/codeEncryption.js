@@ -53,6 +53,9 @@ var CodeEncryption = /** @class */ (function (_super) {
                 if (currentTopLevelFunction === '' && node.type === 'FunctionDeclaration' && node.id !== null) {
                     currentTopLevelFunction = node.id.name;
                 }
+                if (transformations_1.loopStatements.includes(node.type)) {
+                    return estraverse.VisitorOption.Skip;
+                }
             },
             leave: function (node) {
                 if (node.type === 'FunctionDeclaration' && node.id !== null && node.id.name === currentTopLevelFunction) {
