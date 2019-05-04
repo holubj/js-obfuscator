@@ -20,7 +20,7 @@ stream:
     file: ./transformations/numberObfuscation.js
     enabled: true
     settings:
-      chance: 0.5 # 50% of numbers obfuscated
+      chance: 1 # 100% of numbers obfuscated
   - name: Function Arguments Reordering
     file: ./transformations/functionArgumentsReordering.js
     enabled: true
