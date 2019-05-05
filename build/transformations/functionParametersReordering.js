@@ -27,38 +27,38 @@ var estraverse = __importStar(require("estraverse"));
 var shuffle_array_1 = __importDefault(require("shuffle-array"));
 var configuration_1 = require("../configuration");
 var transformations_1 = require("../transformations");
-var FunctionArgumentReordering = /** @class */ (function (_super) {
-    __extends(FunctionArgumentReordering, _super);
-    function FunctionArgumentReordering() {
+var FunctionParametersReordering = /** @class */ (function (_super) {
+    __extends(FunctionParametersReordering, _super);
+    function FunctionParametersReordering() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
     /**
      * @returns {estree.Program}
-     * @memberof FunctionDefinitonReordering
+     * @memberof FunctionParametersReordering
      */
-    FunctionArgumentReordering.prototype.apply = function () {
+    FunctionParametersReordering.prototype.apply = function () {
         var _this = this;
         var count = 0;
         estraverse.traverse(this.ast, {
             enter: function (node) {
                 if (node.type === 'FunctionDeclaration' && node.id !== null) {
                     if (_this.isSuitableFunc(node, node.id.name)) {
-                        _this.reorderArguments(node.id.name, node.params.length);
+                        _this.reorderParameters(node.id.name, node.params.length);
                         count++;
                     }
                 }
             }
         });
-        configuration_1.Verbose.log(("Arguments of '" + count + "' functions reordered").yellow);
+        configuration_1.Verbose.log(("Parameters of " + count + " functions reordered").yellow);
         return this.ast;
     };
     /**
      * @protected
      * @param {string} funcIdent
      * @param {number} paramsCount
-     * @memberof FunctionArgumentReordering
+     * @memberof FunctionParametersReordering
      */
-    FunctionArgumentReordering.prototype.reorderArguments = function (funcIdent, paramsCount) {
+    FunctionParametersReordering.prototype.reorderParameters = function (funcIdent, paramsCount) {
         var newOrder = Array.from({ length: paramsCount }, function (x, i) { return i; });
         newOrder = shuffle_array_1.default(newOrder);
         estraverse.replace(this.ast, {
@@ -88,9 +88,9 @@ var FunctionArgumentReordering = /** @class */ (function (_super) {
      * @param {estree.FunctionDeclaration} funcDeclaration
      * @param {string} funcIdent
      * @returns {boolean}
-     * @memberof FunctionArgumentReordering
+     * @memberof FunctionParametersReordering
      */
-    FunctionArgumentReordering.prototype.isSuitableFunc = function (funcDeclaration, funcIdent) {
+    FunctionParametersReordering.prototype.isSuitableFunc = function (funcDeclaration, funcIdent) {
         return (funcDeclaration.params.length > 1 &&
             this.isUniqueFuncDeclaration(funcIdent) &&
             !this.usesArgumentsIdent(funcDeclaration) &&
@@ -100,9 +100,9 @@ var FunctionArgumentReordering = /** @class */ (function (_super) {
      * @protected
      * @param {string} funcIdent
      * @returns {boolean}
-     * @memberof FunctionArgumentReordering
+     * @memberof FunctionParametersReordering
      */
-    FunctionArgumentReordering.prototype.isUniqueFuncDeclaration = function (funcIdent) {
+    FunctionParametersReordering.prototype.isUniqueFuncDeclaration = function (funcIdent) {
         var count = 0;
         estraverse.traverse(this.ast, {
             enter: function (node) {
@@ -117,9 +117,9 @@ var FunctionArgumentReordering = /** @class */ (function (_super) {
      * @protected
      * @param {estree.FunctionDeclaration} funcDeclaration
      * @returns {boolean}
-     * @memberof FunctionArgumentReordering
+     * @memberof FunctionParametersReordering
      */
-    FunctionArgumentReordering.prototype.usesArgumentsIdent = function (funcDeclaration) {
+    FunctionParametersReordering.prototype.usesArgumentsIdent = function (funcDeclaration) {
         var argumentsUsed = false;
         estraverse.traverse(funcDeclaration, {
             enter: function (node) {
@@ -135,9 +135,9 @@ var FunctionArgumentReordering = /** @class */ (function (_super) {
      * @param {string} funcIdent
      * @param {number} paramsCount
      * @returns {boolean}
-     * @memberof FunctionArgumentReordering
+     * @memberof FunctionParametersReordering
      */
-    FunctionArgumentReordering.prototype.haveSimpleCalls = function (funcIdent, paramsCount) {
+    FunctionParametersReordering.prototype.haveSimpleCalls = function (funcIdent, paramsCount) {
         var _this = this;
         var simpleCalls = true;
         estraverse.traverse(this.ast, {
@@ -168,9 +168,9 @@ var FunctionArgumentReordering = /** @class */ (function (_super) {
      * @protected
      * @param {estree.Node} search
      * @returns {boolean}
-     * @memberof FunctionArgumentReordering
+     * @memberof FunctionParametersReordering
      */
-    FunctionArgumentReordering.prototype.containsAssignOrUpdateExpression = function (search) {
+    FunctionParametersReordering.prototype.containsAssignOrUpdateExpression = function (search) {
         var contains = false;
         estraverse.traverse(search, {
             enter: function (node) {
@@ -181,6 +181,6 @@ var FunctionArgumentReordering = /** @class */ (function (_super) {
         });
         return contains;
     };
-    return FunctionArgumentReordering;
+    return FunctionParametersReordering;
 }(transformations_1.BaseTransformation));
-module.exports = FunctionArgumentReordering;
+module.exports = FunctionParametersReordering;

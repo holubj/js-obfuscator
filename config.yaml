@@ -21,8 +21,8 @@ stream:
     enabled: true
     settings:
       chance: 1 # 100% of numbers obfuscated
-  - name: Function Arguments Reordering
-    file: ./transformations/functionArgumentsReordering.js
+  - name: Function Parameters Reordering
+    file: ./transformations/functionParametersReordering.js
     enabled: true
   - name: Operator Outlining
     file: ./transformations/operatorOutlining.js
@@ -38,16 +38,16 @@ stream:
     file: ./transformations/literalObfuscation.js
     enabled: true
     settings:
-      splitChance: 0.25 # ~25% of strings splitted
-      arrayChance: 0.85 # ~85% of strings moved to array
+      splitChance: 0.50 # ~50% of strings splitted
+      arrayChance: 0.9 # ~90% of strings moved to array
       base64Chance: 0.25 # ~25% of strings encoded to base64
       unicodeChance: 1 # 100% of strings converted to unicode escape sequence
   - name: Expression Obfuscation
     file: ./transformations/expressionObfuscation.js
     enabled: true
     settings:
-      booleanChance: 0.8 # 80% of booleans obfuscated
-      undefinedChance: 0.8 # 80% of 'undefined' expression obfuscated
+      booleanChance: 0.9 # 90% of booleans obfuscated
+      undefinedChance: 0.9 # 90% of 'undefined' expression obfuscated
   - name: Function Definition Reordering
     file: ./transformations/functionDefinitionReordering.js
     enabled: true
@@ -63,4 +63,4 @@ stream:
     file: ./transformations/codeEncryption.js
     enabled: true
     settings:
-      chance: 0.25 # ~25% of blocks encrypted
+      chance: 0.1 # ~10% of blocks encrypted

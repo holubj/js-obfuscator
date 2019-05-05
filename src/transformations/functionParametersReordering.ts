@@ -5,10 +5,10 @@ import shuffle from 'shuffle-array';
 import { Verbose } from '../configuration';
 import { BaseTransformation } from '../transformations';
 
-class FunctionArgumentReordering extends BaseTransformation {
+class FunctionParametersReordering extends BaseTransformation {
   /**
    * @returns {estree.Program}
-   * @memberof FunctionDefinitonReordering
+   * @memberof FunctionParametersReordering
    */
   public apply(): estree.Program {
     let count: number = 0;
@@ -17,14 +17,14 @@ class FunctionArgumentReordering extends BaseTransformation {
       enter: (node: estree.Node): estree.Node | void => {
         if (node.type === 'FunctionDeclaration' && node.id !== null) {
           if (this.isSuitableFunc(node, node.id.name)) {
-            this.reorderArguments(node.id.name, node.params.length);
+            this.reorderParameters(node.id.name, node.params.length);
             count++;
           }
         }
       }
     });
 
-    Verbose.log(`Arguments of '${count}' functions reordered`.yellow);
+    Verbose.log(`Parameters of ${count} functions reordered`.yellow);
 
     return this.ast;
   }
@@ -33,9 +33,9 @@ class FunctionArgumentReordering extends BaseTransformation {
    * @protected
    * @param {string} funcIdent
    * @param {number} paramsCount
-   * @memberof FunctionArgumentReordering
+   * @memberof FunctionParametersReordering
    */
-  protected reorderArguments(funcIdent: string, paramsCount: number): void {
+  protected reorderParameters(funcIdent: string, paramsCount: number): void {
     let newOrder: number[] = Array.from({ length: paramsCount }, (x: number, i: number) => i);
     newOrder = shuffle(newOrder);
 
@@ -65,7 +65,7 @@ class FunctionArgumentReordering extends BaseTransformation {
    * @param {estree.FunctionDeclaration} funcDeclaration
    * @param {string} funcIdent
    * @returns {boolean}
-   * @memberof FunctionArgumentReordering
+   * @memberof FunctionParametersReordering
    */
   protected isSuitableFunc(funcDeclaration: estree.FunctionDeclaration, funcIdent: string): boolean {
     return (
@@ -80,7 +80,7 @@ class FunctionArgumentReordering extends BaseTransformation {
    * @protected
    * @param {string} funcIdent
    * @returns {boolean}
-   * @memberof FunctionArgumentReordering
+   * @memberof FunctionParametersReordering
    */
   protected isUniqueFuncDeclaration(funcIdent: string): boolean {
     let count: number = 0;
@@ -100,7 +100,7 @@ class FunctionArgumentReordering extends BaseTransformation {
    * @protected
    * @param {estree.FunctionDeclaration} funcDeclaration
    * @returns {boolean}
-   * @memberof FunctionArgumentReordering
+   * @memberof FunctionParametersReordering
    */
   protected usesArgumentsIdent(funcDeclaration: estree.FunctionDeclaration): boolean {
     let argumentsUsed: boolean = false;
@@ -121,7 +121,7 @@ class FunctionArgumentReordering extends BaseTransformation {
    * @param {string} funcIdent
    * @param {number} paramsCount
    * @returns {boolean}
-   * @memberof FunctionArgumentReordering
+   * @memberof FunctionParametersReordering
    */
   protected haveSimpleCalls(funcIdent: string, paramsCount: number): boolean {
     let simpleCalls: boolean = true;
@@ -157,7 +157,7 @@ class FunctionArgumentReordering extends BaseTransformation {
    * @protected
    * @param {estree.Node} search
    * @returns {boolean}
-   * @memberof FunctionArgumentReordering
+   * @memberof FunctionParametersReordering
    */
   protected containsAssignOrUpdateExpression(search: estree.Node): boolean {
     let contains: boolean = false;
@@ -174,4 +174,4 @@ class FunctionArgumentReordering extends BaseTransformation {
   }
 }
 
-export = FunctionArgumentReordering;
+export = FunctionParametersReordering;
