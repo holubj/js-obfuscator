@@ -4,7 +4,7 @@ optimizeInput: false
 optimizeOutput: false
 identifiers:
   rename: true
-  renameGlobals: true
+  renameGlobals: false
 stream:
   - name: Debugger Breakpoint Loop
     file: ./transformations/debuggerBreakpointLoop.js
