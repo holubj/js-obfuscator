@@ -38,7 +38,9 @@ var outputFile = inputFile + '.obf';
 if (process.argv.length > 3) {
     outputFile = process.argv[3];
 }
-var p = espree_1.default.parse(code);
+var p = espree_1.default.parse(code, {
+    ecmaVersion: configuration_1.configuration.ecmaVersion
+});
 if (configuration_1.configuration.optimizeInput) {
     p = esmangle_1.default.optimize(p);
 }

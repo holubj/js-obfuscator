@@ -32,7 +32,9 @@ if (process.argv.length > 3) {
   outputFile = process.argv[3];
 }
 
-let p: estree.Program = espree.parse(code);
+let p: estree.Program = espree.parse(code, {
+  ecmaVersion: configuration.ecmaVersion
+});
 
 if (configuration.optimizeInput) {
   p = esmangle.optimize(p);
