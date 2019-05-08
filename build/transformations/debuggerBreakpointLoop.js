@@ -12,6 +12,7 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
+var codeGeneration_1 = require("../codeGeneration");
 var identifiers_1 = require("../identifiers");
 var insertPosition_1 = require("../insertPosition");
 var transformations_1 = require("../transformations");
@@ -35,8 +36,28 @@ var DebuggerBreakpointLoop = /** @class */ (function (_super) {
         var loopExpr = estemplate(loopTemplate, {
             funcIdent: { type: 'Identifier', name: funcDeclIdent }
         }).body[0];
-        this.ast.body.splice(insertPosition_1.InsertPosition.get(), 0, loopFuncDecl);
-        this.ast.body.splice(insertPosition_1.InsertPosition.get(), 0, loopExpr);
+        var evalExpr = {
+            type: 'ExpressionStatement',
+            expression: {
+                type: 'CallExpression',
+                callee: {
+                    type: 'Identifier',
+                    name: 'eval'
+                },
+                arguments: [
+                    {
+                        type: 'Literal',
+                        value: codeGeneration_1.CodeGeneration.generate({
+                            type: 'BlockStatement',
+                            body: [loopFuncDecl, loopExpr]
+                        })
+                    }
+                ]
+            }
+        };
+        // this.ast.body.splice(InsertPosition.get(), 0, loopFuncDecl);
+        // this.ast.body.splice(InsertPosition.get(), 0, loopExpr);
+        this.ast.body.splice(insertPosition_1.InsertPosition.get(), 0, evalExpr);
         return this.ast;
     };
     return DebuggerBreakpointLoop;

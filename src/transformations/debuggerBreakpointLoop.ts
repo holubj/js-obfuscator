@@ -1,4 +1,5 @@
 import * as estree from 'estree';
+import { CodeGeneration } from '../codeGeneration';
 import { Identifiers } from '../identifiers';
 import { InsertPosition } from '../insertPosition';
 import { BaseTransformation } from '../transformations';
@@ -22,8 +23,27 @@ class DebuggerBreakpointLoop extends BaseTransformation {
       funcIdent: { type: 'Identifier', name: funcDeclIdent }
     }).body[0] as estree.ExpressionStatement;
 
-    this.ast.body.splice(InsertPosition.get(), 0, loopFuncDecl);
-    this.ast.body.splice(InsertPosition.get(), 0, loopExpr);
+    const evalExpr: estree.ExpressionStatement = {
+      type: 'ExpressionStatement',
+      expression: {
+        type: 'CallExpression',
+        callee: {
+          type: 'Identifier',
+          name: 'eval'
+        },
+        arguments: [
+          {
+            type: 'Literal',
+            value: CodeGeneration.generate({
+              type: 'BlockStatement',
+              body: [loopFuncDecl, loopExpr]
+            })
+          }
+        ]
+      }
+    };
+
+    this.ast.body.splice(InsertPosition.get(), 0, evalExpr);
 
     return this.ast;
   }
