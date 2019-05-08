@@ -9,6 +9,9 @@ stream:
   - name: Debugger Breakpoint Loop
     file: ./transformations/debuggerBreakpointLoop.js
     enabled: true
+  - name: Console Redefinition
+    file: ./transformations/consoleRedefinition.js
+    enabled: true
   - name: Declarations Reordering
     file: ./transformations/declarationsReordering.js
     enabled: true
@@ -32,9 +35,6 @@ stream:
       unaryOperatorChance: 0.75 # ~75% of unary operators outlined
       assignmentOperatorChance: 0.75 # ~75% of assignment operators transformed to binary ( a +=1 transforms into a = a + 1)
       binaryOperatorChance: 0.75 # ~75% of binary operators outlined
-  - name: Console Redefinition
-    file: ./transformations/consoleRedefinition.js
-    enabled: true
   - name: Literal Obfuscation
     file: ./transformations/literalObfuscation.js
     enabled: true
