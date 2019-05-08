@@ -1,3 +1,4 @@
+ecmaVersion: 5 # ECMAScript version of the input code
 verbose: true
 optimizeInput: false
 optimizeOutput: false
@@ -12,7 +13,7 @@ stream:
     file: ./transformations/declarationsReordering.js
     enabled: true
     settings:
-      deeperBlockChance: 0.33 # 33% chance to move declaration deeper one block in the current scope
+      deeperBlockChance: 0.33 # 33% chance to move declaration deeper in the current scope
   - name: Computed Member # transforms object.property to object['property']
     file: ./transformations/computedMember.js
     enabled: true
@@ -20,7 +21,7 @@ stream:
     file: ./transformations/numberObfuscation.js
     enabled: true
     settings:
-      chance: 1 # 100% of numbers obfuscated
+      chance: 0.9 # 90% of numbers obfuscated
   - name: Function Parameters Reordering
     file: ./transformations/functionParametersReordering.js
     enabled: true
@@ -33,15 +34,15 @@ stream:
       binaryOperatorChance: 0.75 # ~75% of binary operators outlined
   - name: Console Redefinition
     file: ./transformations/consoleRedefinition.js
-    enabled: false
+    enabled: true
   - name: Literal Obfuscation
     file: ./transformations/literalObfuscation.js
     enabled: true
     settings:
-      splitChance: 0.50 # ~50% of strings splitted
-      arrayChance: 0.9 # ~90% of strings moved to array
+      splitChance: 0.75 # ~75% of strings splitted
+      arrayChance: 0.9 # ~90% of strings moved to global array
       base64Chance: 0.25 # ~25% of strings encoded to base64
-      unicodeChance: 1 # 100% of strings converted to unicode escape sequence
+      unicodeChance: 0.25 # 25% of strings converted to unicode escape sequence
   - name: Expression Obfuscation
     file: ./transformations/expressionObfuscation.js
     enabled: true
@@ -58,9 +59,9 @@ stream:
     file: ./transformations/evalOutlining.js
     enabled: true
     settings:
-      chance: 0.1 # ~10% of expressions outlined to eval
+      chance: 0.05 # ~5% of blocks outlined to eval
   - name: Code Encryption & Integrity
     file: ./transformations/codeEncryption.js
     enabled: true
     settings:
-      chance: 0.1 # ~10% of blocks encrypted
+      chance: 0.05 # ~5% of blocks encrypted
