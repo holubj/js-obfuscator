@@ -1,0 +1,9 @@
+var a = 'example';
+var b = 'example';
+var c = 'example';
+var d = 'test';
+var e = 'test2';
+var f = 'test3';
+var g = 'test4';
+var h = 'test5' + 'test';
+var i = 'test6' + f;
