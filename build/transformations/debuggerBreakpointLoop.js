@@ -55,8 +55,6 @@ var DebuggerBreakpointLoop = /** @class */ (function (_super) {
                 ]
             }
         };
-        // this.ast.body.splice(InsertPosition.get(), 0, loopFuncDecl);
-        // this.ast.body.splice(InsertPosition.get(), 0, loopExpr);
         this.ast.body.splice(insertPosition_1.InsertPosition.get(), 0, evalExpr);
         return this.ast;
     };
