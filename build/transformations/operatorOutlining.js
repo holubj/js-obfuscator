@@ -153,13 +153,14 @@ var OperatorOutlining = /** @class */ (function (_super) {
                 if (node.type === 'AssignmentExpression') {
                     if (node.operator !== '=' && node.left.type === 'Identifier') {
                         if (Math.random() <= _this.settings.assignmentOperatorChance) {
+                            // @ts-ignore
                             return {
                                 type: 'AssignmentExpression',
                                 operator: '=',
                                 left: node.left,
                                 right: {
                                     type: 'BinaryExpression',
-                                    operator: '+',
+                                    operator: node.operator.substring(0, node.operator.length - 1),
                                     left: node.left,
                                     right: node.right
                                 }
