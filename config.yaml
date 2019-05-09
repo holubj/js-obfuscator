@@ -11,7 +11,7 @@ stream:
     enabled: true
   - name: Console Redefinition
     file: ./transformations/consoleRedefinition.js
-    enabled: true
+    enabled: false
   - name: Declarations Reordering
     file: ./transformations/declarationsReordering.js
     enabled: true
