@@ -19,7 +19,7 @@ Contains the following transformations:
 - Randomizing the order of function definitions
 - Function merging
 - Code outlining into eval
-- Code encryption and integrity protection
+- **Code encryption** and **integrity protection**
 
 Each transformation can be configured in `config.yaml` file.
 
