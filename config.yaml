@@ -54,7 +54,7 @@ stream:
     enabled: true
   - name: Function Merging
     file: ./transformations/functionMerging.js
-    enabled: true
+    enabled: false
   - name: Eval Outlining
     file: ./transformations/evalOutlining.js
     enabled: true
